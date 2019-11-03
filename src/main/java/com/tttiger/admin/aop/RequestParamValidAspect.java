@@ -1,13 +1,11 @@
 package com.tttiger.admin.aop;
 
 import com.tttiger.admin.common.ResultMap;
-import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
 import org.springframework.core.ParameterNameDiscoverer;
 import org.springframework.stereotype.Component;
@@ -31,17 +29,16 @@ import java.util.Set;
  */
 @Aspect
 @Component
+@Slf4j
 public class RequestParamValidAspect {
 
     private final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 
     private final ExecutableValidator validator = factory.getValidator().forExecutables();
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
-
     ParameterNameDiscoverer parameterNameDiscoverer = new LocalVariableTableParameterNameDiscoverer();
 
-    @Around("execution(public com.tttiger.admin.common.ResultMap com.tttiger.admin.controller.*.*(..))")
+    @Around("execution(public com.tttiger.admin.common.ResultMap com.tttiger.admin.controller..*(..))")
     public Object around(ProceedingJoinPoint pjp) throws Throwable {
         try {
             // 获得切入目标对象
@@ -52,7 +49,7 @@ public class RequestParamValidAspect {
             Method method = ((MethodSignature) pjp.getSignature()).getMethod();
 
             // 输出日期
-            logger.info("调用该类:{} 的 {} 方法 参数为: [{}]", target.getClass().getCanonicalName(), method.getName(), Arrays.toString(args));
+            log.info("调用该类:{} 的 {} 方法 参数为: [{}]", target.getClass().getCanonicalName(), method.getName(), Arrays.toString(args));
 
             // 如果没参数，那肯定不校验了
             if (args.length == 0) {
@@ -71,7 +68,6 @@ public class RequestParamValidAspect {
                     }
                 }
             }
-
             // 校验普通参数
             // 执行校验，获得校验结果
             Set<ConstraintViolation<Object>> validResult = validMethodParams(target, method, args);
@@ -83,7 +79,7 @@ public class RequestParamValidAspect {
 
             return pjp.proceed();
         } catch (Throwable e) {
-            logger.error("参数校验切面异常:{}", e.getMessage());
+            log.error("参数校验切面异常:{}", e.getMessage());
             throw e;
         }
     }

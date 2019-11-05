@@ -1,4 +1,4 @@
-package com.tttiger.admin.common.validate;
+package com.tttiger.admin.common.annotation.validate;
 
 /**
  * @author 秦浩桐

@@ -11,7 +11,7 @@ import lombok.Data;
  * @Description 访问路径
  */
 @Data
-public class Menu {
+public class Menu extends BaseBean {
     @TableId(type = IdType.AUTO)
     private Integer menuId;
     private String url;

@@ -6,5 +6,5 @@ package com.tttiger.admin.common.annotation.wrapper;
  * @Date 2019/11/03 13:49
  * @Description
  */
-public class Eq implements WrapperCondition {
+public class Eq extends WrapperCondition {
 }

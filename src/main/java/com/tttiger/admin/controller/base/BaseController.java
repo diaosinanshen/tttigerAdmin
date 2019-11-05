@@ -1,6 +1,7 @@
 package com.tttiger.admin.controller.base;
 
-import com.sxkxfs.official.service.BaseService;
+
+import com.tttiger.admin.service.BaseService;
 
 /**
  * @author 秦浩桐

@@ -9,8 +9,8 @@ spring:
   # 数据源
   datasource:
     username: root
-    password:
-    url: jdbc:mysql://localhost:3306/sxkxfs?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+    password: 123456
+    url: jdbc:mysql://localhost:3306/qin_admin?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
     type: com.alibaba.druid.pool.DruidDataSource
     initialSize: 5
     minIdle: 5
@@ -33,4 +33,6 @@ mybatis-plus:
     safe-row-bounds-enabled: true
 
 logging:
-  level: {com.tttiger:info}
+  level:
+    com.tttiger: info
+  path: classpath:Logback.xml

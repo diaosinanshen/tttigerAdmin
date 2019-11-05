@@ -1,7 +1,7 @@
 package com.tttiger.admin.controller.base;
 
-import com.sxkxfs.official.common.ResultMap;
-import com.sxkxfs.official.validate.Add;
+import com.tttiger.admin.common.ResultMap;
+import com.tttiger.admin.common.annotation.validate.Add;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,16 +16,14 @@ public interface BaseAddController<T> extends BaseController<T> {
 
     /**
      * 通用添加接口
-     * @param t 添加实体
+     *
+     * @param t      添加实体
      * @param result 参数校验结果
      * @return 统一结果封装
      */
     @PostMapping("/add")
     default ResultMap add(@Validated(Add.class) T t, BindingResult result) {
-        if (getService().insert(t)) {
-            return ResultMap.ok();
-        }
-        return ResultMap.fail();
+        return getService().insert(t);
     }
 
 }

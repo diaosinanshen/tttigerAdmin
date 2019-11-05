@@ -1,8 +1,7 @@
 package com.tttiger.admin.controller.base;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.sxkxfs.official.common.ResultMap;
+import com.tttiger.admin.common.ResultMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -23,8 +22,6 @@ public interface BaseSelectPageController<T> extends BaseController<T> {
     @GetMapping("/select")
     default ResultMap select(@RequestParam(required = false, defaultValue = "1", value = "page") Integer page,
                              @RequestParam(required = false, defaultValue = "10", value = "limit") Integer limit) {
-        IPage<T> iPage = new Page<>(page, limit);
-        IPage<T> seriesIPage = getService().selectPage(iPage, null);
-        return ResultMap.ok().data(seriesIPage);
+        return getService().selectPage(new Page<>(page, limit), null);
     }
 }

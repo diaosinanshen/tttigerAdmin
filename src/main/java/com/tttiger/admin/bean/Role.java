@@ -13,7 +13,7 @@ import java.util.List;
  * @Description 账号角色
  */
 @Data
-public class Role {
+public class Role extends BaseBean{
     @TableId(type = IdType.AUTO)
     private Integer roleId;
     private String roleName;

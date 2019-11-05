@@ -3,6 +3,7 @@ package com.tttiger.admin.service;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.tttiger.admin.common.ResultMap;
 
 import java.io.Serializable;
 import java.util.List;
@@ -28,8 +29,11 @@ public interface BaseService<T> {
      * @param t 数据实体
      * @return 是否成功
      */
-    default boolean insert(T t) {
-        return getMapper().insert(t) == 1;
+    default ResultMap insert(T t) {
+        if (getMapper().insert(t) == 1) {
+            return ResultMap.ok().message("添加成功");
+        }
+        return ResultMap.fail();
     }
 
 
@@ -39,8 +43,12 @@ public interface BaseService<T> {
      * @param wrapper 查询条件
      * @return 查询结果
      */
-    default List<T> selectList(Wrapper<T> wrapper) {
-        return getMapper().selectList(wrapper);
+    default ResultMap selectList(Wrapper<T> wrapper) {
+        List<T> ts = getMapper().selectList(wrapper);
+        if (ts.isEmpty()) {
+            return ResultMap.fail().message("未找到匹配数据").data(ts);
+        }
+        return ResultMap.ok().data(ts);
     }
 
     /**
@@ -49,8 +57,12 @@ public interface BaseService<T> {
      * @param wrapper 查询条件
      * @return 查询结果
      */
-    default T selectOne(Wrapper<T> wrapper) {
-        return getMapper().selectOne(wrapper);
+    default ResultMap selectOne(Wrapper<T> wrapper) {
+        T t = getMapper().selectOne(wrapper);
+        if (t == null) {
+            return ResultMap.fail().message("未找到匹配数据");
+        }
+        return ResultMap.fail().message("查询成功").data(t);
     }
 
 
@@ -60,8 +72,12 @@ public interface BaseService<T> {
      * @param id 主键id
      * @return 查询结果
      */
-    default T selectById(Serializable id) {
-        return getMapper().selectById(id);
+    default ResultMap selectById(Serializable id) {
+        T t = getMapper().selectById(id);
+        if (t == null) {
+            return ResultMap.fail().message("未找到匹配数据");
+        }
+        return ResultMap.fail().message("查询成功").data(t);
     }
 
     /**
@@ -71,8 +87,12 @@ public interface BaseService<T> {
      * @param wrapper 查询条件
      * @return 查询结果
      */
-    default IPage<T> selectPage(IPage<T> page, Wrapper<T> wrapper) {
-        return getMapper().selectPage(page, wrapper);
+    default ResultMap selectPage(IPage<T> page, Wrapper<T> wrapper) {
+        IPage<T> tiPage = getMapper().selectPage(page, wrapper);
+        if (tiPage.getRecords().isEmpty()) {
+            return ResultMap.fail().message("未找到匹配数据");
+        }
+        return ResultMap.fail().message("查询成功").data(tiPage);
     }
 
 
@@ -82,8 +102,11 @@ public interface BaseService<T> {
      * @param t 实体
      * @return 是否更新成功
      */
-    default boolean updateById(T t) {
-        return getMapper().updateById(t) == 1;
+    default ResultMap updateById(T t) {
+        if (getMapper().updateById(t) == 1) {
+            return ResultMap.ok().message("更新成功").data(t);
+        }
+        return ResultMap.fail().message("更新失败");
     }
 
     /**
@@ -93,8 +116,11 @@ public interface BaseService<T> {
      * @param wrapper 条件
      * @return 是否更新成功
      */
-    default boolean update(T t, Wrapper<T> wrapper) {
-        return getMapper().update(t, wrapper) == 1;
+    default ResultMap update(T t, Wrapper<T> wrapper) {
+        if (getMapper().update(t, wrapper) == 1) {
+            return ResultMap.ok().message("更新成功").data(t);
+        }
+        return ResultMap.fail().message("更新失败");
     }
 
 
@@ -104,8 +130,11 @@ public interface BaseService<T> {
      * @param id 主键id
      * @return 是否删除成功
      */
-    default boolean delete(Serializable id) {
-        return getMapper().deleteById(id) == 1;
+    default ResultMap delete(Serializable id) {
+        if (getMapper().deleteById(id) == 1) {
+            return ResultMap.ok().message("删除成功");
+        }
+        return ResultMap.fail().message("删除失败");
     }
 
     /**
@@ -114,7 +143,11 @@ public interface BaseService<T> {
      * @param wrapper 条件封装
      * @return 是否删除成功
      */
-    default boolean delete(Wrapper<T> wrapper) {
-        return getMapper().delete(wrapper) > 0;
+    default ResultMap delete(Wrapper<T> wrapper) {
+        int deleted = getMapper().delete(wrapper);
+        if(deleted>0){
+            return ResultMap.ok().message(String.format("成功删除 {} 条", deleted));
+        }
+        return ResultMap.fail().message("成功 0 条数据");
     }
 }

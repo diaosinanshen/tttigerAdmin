@@ -39,27 +39,52 @@ public class ResultMap {
         return b ? ResultMap.ok() : ResultMap.fail().message(failMessage);
     }
 
+    /**
+     * 设置响应数据
+     *
+     * @param data 响应数据
+     * @return 封装返回结果
+     */
     public ResultMap data(Object data) {
         this.data = data;
         return this;
     }
 
+    /**
+     * 响应是否成功
+     *
+     * @return 是否成功
+     */
+    public boolean isOk() {
+        return this.status == ResultMap.SUCCESS;
+    }
+
+    /**
+     * 响应是否失败
+     *
+     * @return 是否失败
+     */
+    public boolean isFail() {
+        return this.status == ResultMap.FAILED;
+    }
+
+    /**
+     * 响应数据是否为空
+     *
+     * @return 是否为空
+     */
+    public boolean isEmpty() {
+        return this.data == null;
+    }
+
+    /**
+     * 设置响应消息
+     * @param message 响应消息
+     * @return 封装返回结果
+     */
     public ResultMap message(String message) {
         this.message = message;
         return this;
     }
 
-    public static ResultMap notNull(Object obj) {
-        if (obj == null) {
-            return ResultMap.fail().message("未找到匹配数据");
-        }
-        return ResultMap.ok().data(obj);
-    }
-
-    public static ResultMap notNull(Object obj, String ifNullMessage) {
-        if (obj == null) {
-            return ResultMap.fail().message(ifNullMessage);
-        }
-        return ResultMap.ok().data(obj);
-    }
 }

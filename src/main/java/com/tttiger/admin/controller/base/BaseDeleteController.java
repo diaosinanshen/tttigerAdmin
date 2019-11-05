@@ -1,6 +1,6 @@
 package com.tttiger.admin.controller.base;
 
-import com.sxkxfs.official.common.ResultMap;
+import com.tttiger.admin.common.ResultMap;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.validation.constraints.NotNull;
@@ -20,9 +20,6 @@ public interface BaseDeleteController<T> extends BaseController<T> {
      */
     @PostMapping("/delete")
     default ResultMap delete(@NotNull(message = "id不能为空") Integer id) {
-        if (getService().delete(id)) {
-            return ResultMap.ok();
-        }
-        return ResultMap.fail();
+        return getService().delete(id);
     }
 }

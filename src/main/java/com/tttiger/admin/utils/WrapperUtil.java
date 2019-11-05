@@ -38,18 +38,8 @@ public class WrapperUtil {
      * @param <T> 实体类型
      * @return 返回封装好的wrapper
      */
-    public static <T> Wrapper<T> getWrapper(T t) {
-        return getWrapper(t, "");
-    }
-
-    /**
-     * @param t     实体类
-     * @param <T>   实体类型
-     * @param alias 别名,在join查询时,表名起的别名
-     * @return 返回封装好的wrapper
-     */
-    public static <T> Wrapper<T> getWrapper(T t, String alias) {
-        return getWrapper(t, alias);
+    public static <T> Wrapper<T> getWrapper(T t, Class... group) {
+        return getWrapper(t, "", group);
     }
 
     /**
@@ -65,7 +55,6 @@ public class WrapperUtil {
         QueryWrapper<T> queryWrapper = new QueryWrapper<>();
         try {
             for (Field field : fields) {
-                field.setAccessible(true);
                 String column = alias == null || "".equals(alias) ? "" : alias + ".";
                 // 如果指定了表字段名
                 if (field.isAnnotationPresent(TableField.class)) {

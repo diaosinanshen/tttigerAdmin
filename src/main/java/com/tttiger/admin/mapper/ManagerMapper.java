@@ -10,4 +10,6 @@ import com.tttiger.admin.bean.Manager;
  * @Description
  */
 public interface ManagerMapper extends BaseMapper<Manager> {
+
+    Manager selectManagerAndRoles(String account);
 }

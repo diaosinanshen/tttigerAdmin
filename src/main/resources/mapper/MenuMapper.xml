@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tttiger.admin.mapper.MenuMapper">
+
+    <resultMap id="menuAndRole" type="com.tttiger.admin.bean.Menu">
+        <id property="menuId" column="menu_id"/>
+        <result property="url" column="url"/>
+        <result property="menuName" column="menu_name"/>
+        <result property="parentMenu" column="parent_menu"/>
+
+        <collection property="roles" ofType="com.tttiger.admin.bean.Role">
+            <result property="roleId" column="role_id"/>
+            <result property="roleName" column="role_name"/>
+        </collection>
+    </resultMap>
+
+    <select id="selectAllMenuAndRoles" resultMap="menuAndRole">
+        select m.*,r.* from menu m
+        left join role_menu rm on rm.menu_id = m.menu_id
+        left join role r on r.role_id = rm.role_id
+    </select>
+</mapper>

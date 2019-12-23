@@ -113,7 +113,7 @@ public class RoleBasedVoter implements AccessDecisionVoter<Object>, Initializing
                 for (int i = 0; i < roles.size(); i++) {
                     strings[i] = "ROLE_" + roles.get(i).getRoleName();
                 }
-                urlRequiredRoleMapping.put(x.getUrl() + "/**", SecurityConfig.createList(strings));
+                urlRequiredRoleMapping.put(x.getHref() + "/**", SecurityConfig.createList(strings));
             }
         });
     }

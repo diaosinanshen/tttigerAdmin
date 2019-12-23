@@ -17,9 +17,12 @@ import java.util.List;
 public class Menu extends BaseBean {
     @TableId(type = IdType.AUTO)
     private Integer menuId;
-    private String url;
-    private String menuName;
+    private String title;
+    private String href;
     private Integer parentMenu;
+
+    private List<Menu> child;
+    private String icon;
 
     @TableField(exist = false)
     private List<Role> roles;

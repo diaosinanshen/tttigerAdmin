@@ -14,6 +14,11 @@ public class StringUtil {
         return str == null || "".equals(str.trim());
     }
 
+
+    public static boolean isNotEmpty(String str) {
+        return !StringUtil.isEmpty(str);
+    }
+
     /**
      * 将以逗号分隔的字符串转换成字符串数组
      *
@@ -108,4 +113,6 @@ public class StringUtil {
             return null;
         }
     }
+
+    private StringUtil(){}
 }

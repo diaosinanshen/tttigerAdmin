@@ -5,8 +5,8 @@
 
     <resultMap id="menuAndRole" type="com.tttiger.admin.bean.Menu">
         <id property="menuId" column="menu_id"/>
-        <result property="url" column="url"/>
-        <result property="menuName" column="menu_name"/>
+        <result property="href" column="href"/>
+        <result property="title" column="title"/>
         <result property="parentMenu" column="parent_menu"/>
 
         <collection property="roles" ofType="com.tttiger.admin.bean.Role">
@@ -19,5 +19,15 @@
         select m.*,r.* from menu m
         left join role_menu rm on rm.menu_id = m.menu_id
         left join role r on r.role_id = rm.role_id
+    </select>
+
+
+    <select id="selectUserHasAuthorityMenu" resultType="com.tttiger.admin.bean.Menu">
+        select m.* from manager ma
+        inner join manager_role mr on mr.manager_id = ma.manager_id
+        inner join role r on r.role_id = mr.role_id
+        inner join role_menu rm on rm.role_id = r.role_id
+        inner join menu m on m.menu_id = rm.menu_id
+        where ma.manager_account = #{account}
     </select>
 </mapper>

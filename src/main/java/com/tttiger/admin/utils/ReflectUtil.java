@@ -31,4 +31,7 @@ public class ReflectUtil {
             log.warn("反射设置属性失败：{}", e.getMessage());
         }
     }
+
+
+    private ReflectUtil(){}
 }

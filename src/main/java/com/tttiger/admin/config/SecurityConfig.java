@@ -70,7 +70,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .loginPage("/login").permitAll()
                 .and()
 
-                .authorizeRequests().antMatchers("/login", "/js/**", "/favicon.ico").permitAll()
+                .authorizeRequests().antMatchers("/login", "/js/**", "/css/**",
+                "/layui/**", "/lib/**", "/images/**", "/favicon.ico").permitAll()
                 .and()
 
                 .formLogin().loginProcessingUrl("/user/login")
@@ -79,7 +80,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .and()
                 .logout().permitAll()
-
+                .and()
+                .headers().frameOptions().disable()
                 .and()
                 .csrf().disable()
                 .authorizeRequests().anyRequest().authenticated()

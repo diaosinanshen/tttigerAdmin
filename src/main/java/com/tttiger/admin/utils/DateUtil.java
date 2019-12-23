@@ -768,4 +768,6 @@ public class DateUtil {
         System.out.println(date1);
     }
 
+    private DateUtil(){}
+
 }

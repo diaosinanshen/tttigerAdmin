@@ -18,4 +18,12 @@ public interface MenuMapper extends BaseMapper<Menu> {
      * @return
      */
     List<Menu> selectAllMenuAndRoles();
+
+
+    /**
+     * 根据用户账号查询用户所拥有的菜单权限
+     * @param account 用户账号
+     * @return 用户拥有权限的菜单集合
+     */
+    List<Menu> selectUserHasAuthorityMenu(String account);
 }

@@ -33,6 +33,7 @@ public class DatabaseUserDetailServiceImpl implements UserDetailsService {
             throw new UsernameNotFoundException("用户不存在");
         }
         List<GrantedAuthority> list = new ArrayList<>();
+
         manager.getRoles().forEach(x -> list.add(new SimpleGrantedAuthority("ROLE_"+x.getRoleName())));
         return new User(manager.getManagerAccount(), manager.getManagerPassword(), list);
     }

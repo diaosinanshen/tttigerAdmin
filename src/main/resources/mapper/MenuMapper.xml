@@ -30,4 +30,5 @@
         inner join menu m on m.menu_id = rm.menu_id
         where ma.manager_account = #{account}
     </select>
+
 </mapper>

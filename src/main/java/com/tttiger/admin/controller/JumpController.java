@@ -16,4 +16,5 @@ public class JumpController {
     public String toManager(){
         return "manager";
     }
+
 }

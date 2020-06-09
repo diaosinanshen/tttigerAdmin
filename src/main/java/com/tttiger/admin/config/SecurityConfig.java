@@ -1,8 +1,6 @@
 package com.tttiger.admin.config;
 
-import com.tttiger.admin.security.CustomAccessDeniedHandler;
-import com.tttiger.admin.security.DatabaseUserDetailServiceImpl;
-import com.tttiger.admin.security.RoleBasedVoter;
+import com.tttiger.admin.security.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.access.AccessDecisionManager;
@@ -18,6 +16,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.access.expression.WebExpressionVoter;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 import java.util.Arrays;
 import java.util.List;
@@ -36,6 +36,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private AuthenticationProvider authenticationProvider;
+
+    @Autowired
+    private AuthenticationFailureHandler failureHandler;
+
+    @Autowired
+    private AuthenticationSuccessHandler successHandler;
+
+    @Autowired
+    private VerifyCodeFilter VerifyCodeFilter;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -63,23 +72,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        System.out.println("开始配置权限...............4");
-        //过滤静态登录页面和静态资源,这里的/路径都是指的是controller请求路径并不是指静态页面路径
+        System.out.println("开始配置权限");
+        // 在用户认证前添加验证码拦截器
         http
                 .formLogin()
                 .loginPage("/login").permitAll()
+                .loginProcessingUrl("/user/login")
+                .usernameParameter("managerAccount").passwordParameter("managerPassword")
+                .failureHandler(failureHandler)
+                .successHandler(successHandler)
                 .and()
 
-                .authorizeRequests().antMatchers("/login", "/js/**", "/css/**",
+                .authorizeRequests().antMatchers("/captcha", "/js/**", "/css/**",
                 "/layui/**", "/lib/**", "/images/**", "/favicon.ico").permitAll()
                 .and()
 
-                .formLogin().loginProcessingUrl("/user/login")
-                .usernameParameter("managerAccount").passwordParameter("managerPassword")
-                .failureForwardUrl("/loginFail").defaultSuccessUrl("/loginCheck")
-
-                .and()
-                .logout().permitAll()
+                .logout().permitAll().logoutUrl("/logout").addLogoutHandler(new UserLogoutHandler())
                 .and()
                 .headers().frameOptions().disable()
                 .and()
@@ -87,6 +95,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests().anyRequest().authenticated()
                 .accessDecisionManager(accessDecisionManager())
                 .and().exceptionHandling().accessDeniedHandler(new CustomAccessDeniedHandler()).accessDeniedPage("/denied");
+               // .and().addFilterBefore(VerifyCodeFilter,UsernamePasswordAuthenticationFilter.class);
     }
 
     @Autowired

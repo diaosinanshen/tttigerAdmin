@@ -260,12 +260,4 @@ public class VerifyCodeUtils {
 
         }
     }
-
-    public static void main(String[] args) throws IOException {
-        File dir = new File("C:/Users/H__D/Desktop/");
-        int w = 200, h = 80;
-        String verifyCode = generateVerifyCode(4);
-        File file = new File(dir, verifyCode + ".jpg");
-        outputImage(w, h, file, verifyCode);
-    }
 }

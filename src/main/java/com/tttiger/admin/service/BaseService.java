@@ -31,7 +31,7 @@ public interface BaseService<T> {
      */
     default ResultMap insert(T t) {
         if (getMapper().insert(t) == 1) {
-            return ResultMap.ok().message("添加成功");
+            return ResultMap.success().message("添加成功");
         }
         return ResultMap.fail();
     }
@@ -48,7 +48,7 @@ public interface BaseService<T> {
         if (ts.isEmpty()) {
             return ResultMap.fail().message("未找到匹配数据").data(ts);
         }
-        return ResultMap.ok().data(ts);
+        return ResultMap.success().data(ts);
     }
 
     /**
@@ -92,7 +92,7 @@ public interface BaseService<T> {
         if (tiPage.getRecords().isEmpty()) {
             return ResultMap.fail().message("未找到匹配数据");
         }
-        return ResultMap.fail().message("查询成功").data(tiPage);
+        return ResultMap.success().message("查询成功").data(tiPage);
     }
 
 
@@ -104,7 +104,7 @@ public interface BaseService<T> {
      */
     default ResultMap updateById(T t) {
         if (getMapper().updateById(t) == 1) {
-            return ResultMap.ok().message("更新成功").data(t);
+            return ResultMap.success().message("更新成功").data(t);
         }
         return ResultMap.fail().message("更新失败");
     }
@@ -118,7 +118,7 @@ public interface BaseService<T> {
      */
     default ResultMap update(T t, Wrapper<T> wrapper) {
         if (getMapper().update(t, wrapper) == 1) {
-            return ResultMap.ok().message("更新成功").data(t);
+            return ResultMap.success().message("更新成功").data(t);
         }
         return ResultMap.fail().message("更新失败");
     }
@@ -132,7 +132,7 @@ public interface BaseService<T> {
      */
     default ResultMap delete(Serializable id) {
         if (getMapper().deleteById(id) == 1) {
-            return ResultMap.ok().message("删除成功");
+            return ResultMap.success().message("删除成功");
         }
         return ResultMap.fail().message("删除失败");
     }
@@ -146,7 +146,7 @@ public interface BaseService<T> {
     default ResultMap delete(Wrapper<T> wrapper) {
         int deleted = getMapper().delete(wrapper);
         if(deleted>0){
-            return ResultMap.ok().message(String.format("成功删除 {} 条", deleted));
+            return ResultMap.success().message(String.format("成功删除 {} 条", deleted));
         }
         return ResultMap.fail().message("成功 0 条数据");
     }

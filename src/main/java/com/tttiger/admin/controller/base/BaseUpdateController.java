@@ -4,6 +4,7 @@ import com.tttiger.admin.common.ResultMap;
 import com.tttiger.admin.common.annotation.validate.Update;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * @author 秦浩桐
@@ -19,6 +20,7 @@ public interface BaseUpdateController<T> extends BaseController<T> {
      * @return 统一结果封装
      */
     @PostMapping("/update")
+    @ResponseBody
     default ResultMap update(@Validated(Update.class) T t) {
         return getService().updateById(t);
     }

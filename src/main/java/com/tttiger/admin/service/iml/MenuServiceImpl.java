@@ -25,9 +25,15 @@ public class MenuServiceImpl implements MenuService {
     private MenuMapper menuMapper;
 
     @Override
+    public List<Menu> selectAll() {
+        return buildHierarchicalMenu(menuMapper.selectList(null));
+    }
+
+    @Override
     public List<Menu> selectUserHasAuthorityMenu(String account) {
         return buildHierarchicalMenu(menuMapper.selectUserHasAuthorityMenu(account));
     }
+
 
     @Override
     public BaseMapper<Menu> getMapper() {
@@ -50,10 +56,10 @@ public class MenuServiceImpl implements MenuService {
     }
 
     private Menu recursionBuild(Menu parentMenu, List<Menu> childMenu) {
-        parentMenu.setChild(new ArrayList<>());
+        parentMenu.setChildren(new ArrayList<>());
         for (Menu next : childMenu) {
             if (next.getParentMenu().equals(parentMenu.getMenuId())) {
-                parentMenu.getChild().add(next);
+                parentMenu.getChildren().add(next);
                 if (hasChild(next, childMenu)) {
                     recursionBuild(next, childMenu);
                 }

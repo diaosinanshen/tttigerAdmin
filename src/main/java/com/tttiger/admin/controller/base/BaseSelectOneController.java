@@ -2,6 +2,7 @@ package com.tttiger.admin.controller.base;
 
 import com.tttiger.admin.common.ResultMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.validation.constraints.NotNull;
 
@@ -19,6 +20,7 @@ public interface BaseSelectOneController<T> extends BaseController<T> {
      * @return 统一结果封装
      */
     @GetMapping("/select/one")
+    @ResponseBody
     default ResultMap selectOne(@NotNull(message = "id不能为空") Integer id) {
         return getService().selectById(id);
     }

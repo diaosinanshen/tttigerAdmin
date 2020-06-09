@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration scan="true" scanPeriod="60 seconds">
-    <property name="LOG_PATH" value="F:/official-log/" />
+    <property name="LOG_PATH" value="F:/admin-log/" />
     <!-- 控制台设置 -->
     <contextName>logback</contextName>
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">

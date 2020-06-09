@@ -26,4 +26,6 @@ public interface MenuMapper extends BaseMapper<Menu> {
      * @return 用户拥有权限的菜单集合
      */
     List<Menu> selectUserHasAuthorityMenu(String account);
+
+
 }

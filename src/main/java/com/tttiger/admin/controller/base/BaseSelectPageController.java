@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.tttiger.admin.common.ResultMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * @author 秦浩桐
@@ -20,6 +21,7 @@ public interface BaseSelectPageController<T> extends BaseController<T> {
      * @return 统一结果封装
      */
     @GetMapping("/select")
+    @ResponseBody
     default ResultMap select(@RequestParam(required = false, defaultValue = "1", value = "page") Integer page,
                              @RequestParam(required = false, defaultValue = "10", value = "limit") Integer limit) {
         return getService().selectPage(new Page<>(page, limit), null);

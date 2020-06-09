@@ -14,14 +14,15 @@ import java.util.List;
  * @Description 访问路径
  */
 @Data
-public class Menu extends BaseBean {
+public class Menu {
     @TableId(type = IdType.AUTO)
     private Integer menuId;
     private String title;
     private String href;
     private Integer parentMenu;
 
-    private List<Menu> child;
+    @TableField(exist = false)
+    private List<Menu> children;
     private String icon;
 
     @TableField(exist = false)

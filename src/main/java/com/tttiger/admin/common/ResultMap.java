@@ -5,8 +5,6 @@ import lombok.Data;
 /**
  * @author 秦浩桐
  * @version 1.0
- * @Date 2019/09/28 20:24
- * @Description
  */
 @Data
 public class ResultMap {
@@ -18,7 +16,7 @@ public class ResultMap {
     private String message;
     private Object data;
 
-    public static ResultMap ok() {
+    public static ResultMap success() {
         ResultMap resultMap = new ResultMap();
         resultMap.setStatus(ResultMap.SUCCESS);
         return resultMap;
@@ -32,11 +30,11 @@ public class ResultMap {
     }
 
     public static ResultMap predicate(boolean b) {
-        return b ? ResultMap.ok() : ResultMap.fail();
+        return b ? ResultMap.success() : ResultMap.fail();
     }
 
     public static ResultMap predicate(boolean b, String failMessage) {
-        return b ? ResultMap.ok() : ResultMap.fail().message(failMessage);
+        return b ? ResultMap.success() : ResultMap.fail().message(failMessage);
     }
 
     /**
@@ -55,7 +53,7 @@ public class ResultMap {
      *
      * @return 是否成功
      */
-    public boolean isOk() {
+    public boolean isSuccess() {
         return this.status == ResultMap.SUCCESS;
     }
 

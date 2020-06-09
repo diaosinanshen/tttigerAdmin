@@ -18,4 +18,10 @@ public interface MenuService extends BaseService<Menu> {
      * @return 用户拥有权限的菜单集合
      */
     List<Menu> selectUserHasAuthorityMenu(String account);
+
+    /**
+     * 查询所有菜单列表
+     * @return 整合完成的层级菜单
+     */
+    List<Menu> selectAll();
 }

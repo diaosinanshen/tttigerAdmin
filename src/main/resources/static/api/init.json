@@ -5,11 +5,11 @@
   "homeInfo": {
     "title": "首页",
     "icon": "fa fa-home",
-    "href": "/manager"
+    "href": "/welcome"
   },
   "logoInfo": {
-    "title": "QinAdmin",
-    "image": "/images/logo.png",
+    "title": "智能后勤",
+    "image": "/images/logo.jpg",
     "href": ""
   },
   "menuInfo": {

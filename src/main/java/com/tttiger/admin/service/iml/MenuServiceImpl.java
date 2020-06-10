@@ -25,6 +25,11 @@ public class MenuServiceImpl implements MenuService {
     private MenuMapper menuMapper;
 
     @Override
+    public List<Menu> selectMenuByRoleId(Integer roleId) {
+        return menuMapper.selectMenuByRoleId(roleId);
+    }
+
+    @Override
     public List<Menu> selectAll() {
         return buildHierarchicalMenu(menuMapper.selectList(null));
     }

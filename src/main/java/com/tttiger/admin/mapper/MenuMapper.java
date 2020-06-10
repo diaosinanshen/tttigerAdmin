@@ -27,5 +27,10 @@ public interface MenuMapper extends BaseMapper<Menu> {
      */
     List<Menu> selectUserHasAuthorityMenu(String account);
 
-
+    /**
+     * 根据角色id查询角色拥有菜单
+     * @param roleId 角色id
+     * @return 未拼装好的菜单
+     */
+    List<Menu> selectMenuByRoleId(Integer roleId);
 }

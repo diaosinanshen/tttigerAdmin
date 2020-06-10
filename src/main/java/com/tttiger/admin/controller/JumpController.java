@@ -4,17 +4,24 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 /**
- * @author 秦浩桐
- * @version 1.0
- * @Date 2019/12/22 21:07
- * @Description
+ * @author QinHaoTong
+ * 菜单页面跳转控制
  */
 @Controller
 public class JumpController {
+
+    @GetMapping("/welcome")
+    public String toWelcome(){
+        return "welcome";
+    }
+
+    @GetMapping("/role")
+    public String toRole(){
+        return "role";
+    }
 
     @GetMapping("/manager")
     public String toManager(){
         return "manager";
     }
-
 }

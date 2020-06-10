@@ -31,4 +31,9 @@
         where ma.manager_account = #{account}
     </select>
 
+    <select id="selectMenuByRoleId" resultType="com.tttiger.admin.bean.Menu">
+        select m.* from role_menu rm
+        right join menu m on rm.menu_id = m.menu_id
+        where rm.role_id = #{roleId} and m.parent_menu != -1
+    </select>
 </mapper>

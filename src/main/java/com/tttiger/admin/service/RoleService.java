@@ -15,4 +15,11 @@ public interface RoleService extends BaseService<Role> {
      * @return 影响条数
      */
     boolean addRoleAndMenu(Role role);
+
+    /**
+     * 更新角色与角色权限
+     * @param role
+     * @return
+     */
+    boolean updateRoleMenu(Role role);
 }

@@ -31,7 +31,7 @@
     </div>
     <div style="text-align:center;padding: 40px;">
         <button class="layui-btn layui-btn-lg layui-btn-primary" onclick="closePage()">取消</button>
-        <button class="layui-btn layui-btn-lg layui-btn-normal" style="margin-left: 120px" onclick="addRole()">添加
+        <button class="layui-btn layui-btn-lg layui-btn-normal" style="margin-left: 120px" onclick="updateRole()">保存
         </button>
     </div>
 </div>
@@ -44,8 +44,8 @@
 <script>
     var menuTree;
     layui.use(['tree', 'util'], function () {
-        menuTree = layui.tree
-        var layer = layui.layer
+        menuTree = layui.tree;
+        var layer = layui.layer;
         var util = layui.util;
         http({
             url: "/role/select-menu"
@@ -59,7 +59,9 @@
                 , showCheckbox: true
                 , id: 'menuTreeFlag'
             });
+            getCheckMenuId();
         });
+        $("#roleName").val(parent.roleName);
     });
 
     /**
@@ -76,6 +78,24 @@
         }
     }
 
+    function getCheckMenuId() {
+        http({
+            url: "/role/select-role-menu",
+            method: "get",
+            data: {
+                "id": parent.updateRoleId
+            }
+        }, function (res) {
+            const checkedIds = [];
+            var menus = res.data;
+            for (var i = 0; i < menus.length; i++) {
+                checkedIds.push(menus[i].menuId);
+            }
+            menuTree.setChecked('menuTreeFlag', checkedIds);
+        });
+
+    }
+
     /**
      * 获取组装选中的菜单
      */
@@ -88,29 +108,28 @@
         }
     }
 
-    function addRole() {
+    function updateRole() {
         var data = menuTree.getChecked('menuTreeFlag');
-        var arr = new Array();
+        var arr = [];
         getSelectMenuId(data, arr);
         var role = {};
         role.roleName = $("#roleName").val();
+        role.roleId = parent.updateRoleId;
         role.menus = arr;
         http({
-            url: "/role/add",
+            url: "/role/update",
             method: "post",
             data: JSON.stringify(role),
             contentType: "application/json",
             dataType: "json"
         }, function (res) {
-            showSuccess(res.message);
+            parent.showSuccess(res.message);
+            closePage();
         }, function (res) {
             showError(res.message)
         })
     }
 
-    function closePage() {
-        var index = parent.layer.getFrameIndex(window.name);
-        parent.layer.close(index);
-    }
+
 </script>
 </html>

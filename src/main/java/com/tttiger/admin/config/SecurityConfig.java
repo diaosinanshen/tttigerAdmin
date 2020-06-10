@@ -84,7 +84,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
 
                 .authorizeRequests().antMatchers("/captcha", "/js/**", "/css/**",
-                "/layui/**", "/lib/**", "/images/**", "/favicon.ico").permitAll()
+                "/layui/**", "/lib/**", "/images/**","/favicon.ico").permitAll()
                 .and()
 
                 .logout().permitAll().logoutUrl("/logout").addLogoutHandler(new UserLogoutHandler())

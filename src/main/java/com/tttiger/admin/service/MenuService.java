@@ -24,4 +24,11 @@ public interface MenuService extends BaseService<Menu> {
      * @return 整合完成的层级菜单
      */
     List<Menu> selectAll();
+
+    /**
+     * 查询角色所拥有的菜单
+     * @param roleId 角色id
+     * @return 未组合的Menu
+     */
+    List<Menu> selectMenuByRoleId(Integer roleId);
 }

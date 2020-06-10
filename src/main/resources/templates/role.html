@@ -28,55 +28,79 @@
 <script src="/lib/jquery-3.4.1/jquery-3.4.1.min.js" charset="utf-8"></script>
 <script src="/lib/layui-v2.5.4/layui.js" charset="utf-8"></script>
 <script type="text/html" id="barDemo">
-    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
-    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    <button class="layui-btn  layui-btn-sm" lay-event="edit">编辑</button>
+    <button class="layui-btn layui-btn-danger  layui-btn-sm" lay-event="del">删除</button>
 </script>
 <script>
-    layui.use('table', function(){
-        var table = layui.table;
-        var layer = layui.layer;
-        table.render({
-            elem: '#roles'
-            ,url:SERVER_URL+'/role/select'
-            ,response:{
-                statusName:"status",
-                statusCode:1,
-                dataName:"data"
-            }
-            ,parseData:function (res) {
-                return {
-                    status:res.status,
-                    data:res.data.records,
-                    count:res.data.total,
-                    limit:res.data.size
+    function getData(){
+        layui.use('table', function(){
+            var table = layui.table;
+            var layer = layui.layer;
+            table.render({
+                elem: '#roles'
+                ,url:SERVER_URL+'/role/select'
+                ,response:{
+                    statusName:"status",
+                    statusCode:1,
+                    dataName:"data"
                 }
-            }
-            ,cols: [ [
-                {title: 'ID', type:"numbers"}
-                ,{field:'roleName', title: '角色名称'}
-                ,{fixed: 'right', align:'center', toolbar: '#barDemo'}
-            ] ]
+                ,parseData:function (res) {
+                    return {
+                        status:res.status,
+                        data:res.data.records,
+                        count:res.data.total,
+                        limit:res.data.size
+                    }
+                }
+                ,cols: [ [
+                    {title: '序号', type:"numbers"}
+                    ,{field:'roleName', title: '角色名称'}
+                    ,{fixed: 'right', align:'center', toolbar: '#barDemo', title: '操作'}
+                ] ]
+            });
         });
-
-        //监听工具条
+    }
+    //监听工具条
+    var updateRoleId = '';
+    var roleName = '';
+    layui.use(['table'],function(){
+        var table = layui.table;
         table.on('tool(roles)', function(obj){
             var data = obj.data;
-            if(obj.event === 'detail'){
-                layer.msg('ID：'+ data.id + ' 的查看操作');
-            } else if(obj.event === 'del'){
-                layer.confirm('真的删除行么', function(index){
-                    obj.del();
-                    layer.close(index);
+            if(obj.event === 'del'){
+                layer.confirm('确定要删除角色吗', function(index){
+                    var roleId = obj.data.roleId;
+                    console.log(roleId);
+                    http({
+                        url:"/role/delete",
+                        method:"post",
+                        data:{
+                            "id":roleId
+                        }
+                    },function(res){
+                        showSuccess(res.message);
+                        layer.close(index);
+                        getData();
+                    },function (res) {
+                        showError(res.message);
+                        layer.close(index);
+                    });
+
                 });
             } else if(obj.event === 'edit'){
-                layer.alert('编辑行：<br>'+ JSON.stringify(data))
+                updateRoleId = data.roleId;
+                roleName = data.roleName;
+                toUpdateRole();
             }
         });
     });
+    getData();
 
+    function toUpdateRole(){
+        openPage("修改角色","/role/to-role-update",'60%','80%');
+    }
     function toAddRole(){
-        openPage("添加角色",SERVER_URL+"/role/to-role-add",'60%','80%');
+        openPage("添加角色","/role/to-role-add",'60%','80%');
     }
 </script>
 </html>

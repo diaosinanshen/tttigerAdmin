@@ -27,6 +27,37 @@ function http(param, successCallback, failureCallback) {
     $.ajax(param);
 }
 
+function showSuccess(message,after) {
+    layui.use(["layer"],function () {
+        var layer = layui.layer;
+        if(message != null && message !== ''){
+            layer.msg(message,{time:2000,icon:6});
+            if(after != null){
+                setTimeout(after,2000);
+            }
+        }
+    })
+}
+
+function showError(message,after) {
+    layui.use(["layer"],function () {
+        var layer = layui.layer;
+        if(message != null && message !== '') {
+            layer.msg(message, {time: 2000, icon: 5, shift: 6});
+            if(after != null){
+                setTimeout(after,2000);
+            }
+        }
+    })
+}
+
+/**
+ * layer打开页面
+ * @param windowTitle 页面标题
+ * @param url 页面路径
+ * @param width 宽度
+ * @param height 高度
+ */
 function openPage(windowTitle,url,width,height){
     layui.use(['layer'],function(){
         var layer = layui.layer;
@@ -47,7 +78,15 @@ function openPage(windowTitle,url,width,height){
             shade:0.4,
             title:windowTitle,
             resize:false,
-            content:[SERVER_URL+"/role/to-role-add","no"]
+            content:[SERVER_URL+url,"no"]
         })
     })
+}
+
+/**
+ * 关闭当前layer打开的页面
+ */
+function closePage() {
+    var index = parent.layer.getFrameIndex(window.name);
+    parent.layer.close(index);
 }

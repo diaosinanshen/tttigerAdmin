@@ -49,15 +49,29 @@ public class MenuServiceImpl implements MenuService {
         if (menus == null || menus.isEmpty()) {
             return Collections.emptyList();
         }
+        // 找到所有根菜单
         List<Menu> parentMenu = menus.stream().filter(x ->
-                x.getMenuId().equals(MenuConstant.ROOT_TYPE)
+                x.getParentMenu().equals(MenuConstant.ROOT_TYPE)
         ).collect(ArrayList::new, (r, y) -> r.add(y), ArrayList::addAll);
-
+        // 找到所有子菜单
         List<Menu> childMenu = menus.stream().filter(x ->
-                !x.getMenuId().equals(MenuConstant.ROOT_TYPE)
+                !x.getParentMenu().equals(MenuConstant.ROOT_TYPE)
         ).collect(ArrayList::new, (r, y) -> r.add(y), ArrayList::addAll);
+        // 父子节点拼装
         parentMenu.forEach(x -> recursionBuild(x, childMenu));
+        // 父子节点排序
+        sortMenu(parentMenu);
+
         return parentMenu;
+    }
+
+    private void sortMenu(List<Menu> menus){
+        menus.sort((x,y)->x.getSort().compareTo(y.getSort()));
+        for(Menu menu:menus){
+            if(menu.getChildren() != null && !menu.getChildren().isEmpty()){
+                sortMenu(menu.getChildren());
+            }
+        }
     }
 
     private Menu recursionBuild(Menu parentMenu, List<Menu> childMenu) {

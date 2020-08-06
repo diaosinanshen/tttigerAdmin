@@ -67,19 +67,18 @@ function openPage(windowTitle,url,width,height){
         if(height == null || height ===''){
             height = '60%';
         }
-        layer.open({
+
+      layer.open({
             type:2,
-            area:[width,height],
             fix:false,
-            maxmin:true,
+            area:[width,height],
             shadeClose:true,
-            isOutAnim:false,
             time:0,
             shade:0.4,
             title:windowTitle,
             resize:false,
-            content:[SERVER_URL+url,"no"]
-        })
+            content:[SERVER_URL+url]
+        });
     })
 }
 

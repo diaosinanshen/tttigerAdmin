@@ -27,4 +27,6 @@ public class Menu {
 
     @TableField(exist = false)
     private List<Role> roles;
+
+    private Integer sort;
 }

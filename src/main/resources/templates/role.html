@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"  xmlns:th="http://www.thymeleaf.org"
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
@@ -12,15 +12,18 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="format-detection" content="telephone=no">
     <link rel="stylesheet" href="/lib/layui-v2.5.4/css/layui.css" media="all"/>
+    <link rel="stylesheet" href="/css/public.css" media="all"/>
     <!--[if lt IE 9]> -->
     <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
     <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
 </head>
 <body>
-    <div class="layui-row">
-        <button type="button" class="layui-btn layui-btn-normal" onclick="toAddRole()">新增</button>
+    <div class="container">
+        <div class="layui-row">
+            <button type="button" class="layui-btn layui-btn-normal" onclick="toAddRole()">新增</button>
+        </div>
+        <table id="roles" lay-filter="roles"></table>
     </div>
-    <table  id="roles" lay-filter="roles"></table>
 </body>
 
 <script src="/js/base.js" charset="utf-8"></script>
@@ -32,62 +35,63 @@
     <button class="layui-btn layui-btn-danger  layui-btn-sm" lay-event="del">删除</button>
 </script>
 <script>
-    function getData(){
-        layui.use('table', function(){
+    function getData() {
+        layui.use('table', function () {
             var table = layui.table;
             var layer = layui.layer;
             table.render({
                 elem: '#roles'
-                ,url:SERVER_URL+'/role/select'
-                ,response:{
-                    statusName:"status",
-                    statusCode:1,
-                    dataName:"data"
+                , url: SERVER_URL + '/role/select'
+                , response: {
+                    statusName: "status",
+                    statusCode: 1,
+                    dataName: "data"
                 }
-                ,parseData:function (res) {
+                , parseData: function (res) {
                     return {
-                        status:res.status,
-                        data:res.data.records,
-                        count:res.data.total,
-                        limit:res.data.size
+                        status: res.status,
+                        data: res.data.records,
+                        count: res.data.total,
+                        limit: res.data.size
                     }
                 }
-                ,cols: [ [
-                    {title: '序号', type:"numbers"}
-                    ,{field:'roleName', title: '角色名称'}
-                    ,{fixed: 'right', align:'center', toolbar: '#barDemo', title: '操作'}
+                , cols: [ [
+                    {title: '序号', type: "numbers"}
+                    , {field: 'roleName', title: '角色名称'}
+                    , {fixed: 'right', align: 'center', toolbar: '#barDemo', title: '操作'}
                 ] ]
             });
         });
     }
+
     //监听工具条
     var updateRoleId = '';
     var roleName = '';
-    layui.use(['table'],function(){
+    layui.use(['table'], function () {
         var table = layui.table;
-        table.on('tool(roles)', function(obj){
+        table.on('tool(roles)', function (obj) {
             var data = obj.data;
-            if(obj.event === 'del'){
-                layer.confirm('确定要删除角色吗', function(index){
+            if (obj.event === 'del') {
+                layer.confirm('确定要删除角色吗', function (index) {
                     var roleId = obj.data.roleId;
                     console.log(roleId);
                     http({
-                        url:"/role/delete",
-                        method:"post",
-                        data:{
-                            "id":roleId
+                        url: "/role/delete",
+                        method: "post",
+                        data: {
+                            "id": roleId
                         }
-                    },function(res){
+                    }, function (res) {
                         showSuccess(res.message);
                         layer.close(index);
                         getData();
-                    },function (res) {
+                    }, function (res) {
                         showError(res.message);
                         layer.close(index);
                     });
 
                 });
-            } else if(obj.event === 'edit'){
+            } else if (obj.event === 'edit') {
                 updateRoleId = data.roleId;
                 roleName = data.roleName;
                 toUpdateRole();
@@ -96,11 +100,12 @@
     });
     getData();
 
-    function toUpdateRole(){
-        openPage("修改角色","/role/to-role-update",'60%','80%');
+    function toUpdateRole() {
+        openPage("修改角色", "/role/to-role-update", '60%', '80%');
     }
-    function toAddRole(){
-        openPage("添加角色","/role/to-role-add",'60%','80%');
+
+    function toAddRole() {
+        openPage("添加角色", "/role/to-role-add", '60%', '80%');
     }
 </script>
 </html>

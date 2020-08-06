@@ -8,7 +8,7 @@ package com.tttiger.admin.common.constant;
  */
 public class MenuConstant {
 
-    public static final int ROOT_TYPE = 1;
+    public static final int ROOT_TYPE = -1;
 
     private MenuConstant(){}
 }

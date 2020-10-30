@@ -1,8 +1,8 @@
 package com.tttiger.admin.security;
 
-import com.tttiger.admin.bean.Menu;
-import com.tttiger.admin.bean.Role;
-import com.tttiger.admin.mapper.MenuMapper;
+import com.tttiger.admin.bean.sys.Menu;
+import com.tttiger.admin.bean.sys.Role;
+import com.tttiger.admin.mapper.sys.MenuMapper;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDecisionVoter;
@@ -105,6 +105,14 @@ public class RoleBasedVoter implements AccessDecisionVoter<Object>, Initializing
      */
     @Override
     public void afterPropertiesSet() throws Exception {
+        reloadAuthority();
+    }
+
+    /**
+     * 重数据库加载访问路径需要的角色
+     */
+    public void reloadAuthority(){
+        urlRequiredRoleMapping.clear();
         List<Menu> menus = menuMapper.selectAllMenuAndRoles();
         menus.stream().filter(x -> !x.getParentMenu().equals(-1)).forEach(x -> {
             List<Role> roles = x.getRoles();

@@ -1,7 +1,9 @@
 package com.tttiger.admin.config;
 
 import com.baomidou.mybatisplus.autoconfigure.ConfigurationCustomizer;
+import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
+import com.tttiger.admin.utils.SnowIdGenerator;
 import org.apache.ibatis.logging.stdout.StdOutImpl;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
@@ -35,4 +37,14 @@ public class MybatisConfig {
         return new PaginationInterceptor();
     }
 
+    @Bean
+    public IdentifierGenerator idGenerator() {
+        return new IdentifierGenerator(){
+            public SnowIdGenerator idGenerator = new SnowIdGenerator();
+            @Override
+            public Number nextId(Object entity) {
+                return idGenerator.nextId();
+            }
+        };
+    }
 }

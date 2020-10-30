@@ -1,6 +1,10 @@
 package com.tttiger.admin.config;
 
-import com.tttiger.admin.security.*;
+import com.tttiger.admin.security.DatabaseUserDetailServiceImpl;
+import com.tttiger.admin.security.RoleBasedVoter;
+import com.tttiger.admin.security.VerifyCodeFilter;
+import com.tttiger.admin.security.handler.UserAccessDeniedHandler;
+import com.tttiger.admin.security.handler.UserLogoutHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.access.AccessDecisionManager;
@@ -72,13 +76,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        System.out.println("开始配置权限");
         // 在用户认证前添加验证码拦截器
         http
                 .formLogin()
                 .loginPage("/login").permitAll()
                 .loginProcessingUrl("/user/login")
-                .usernameParameter("managerAccount").passwordParameter("managerPassword")
+                .usernameParameter("username").passwordParameter("password")
                 .failureHandler(failureHandler)
                 .successHandler(successHandler)
                 .and()
@@ -94,8 +97,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .authorizeRequests().anyRequest().authenticated()
                 .accessDecisionManager(accessDecisionManager())
-                .and().exceptionHandling().accessDeniedHandler(new CustomAccessDeniedHandler()).accessDeniedPage("/denied");
-               // .and().addFilterBefore(VerifyCodeFilter,UsernamePasswordAuthenticationFilter.class);
+                .and().exceptionHandling().accessDeniedHandler(new UserAccessDeniedHandler());
+//                .and().addFilterBefore(VerifyCodeFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
     @Autowired

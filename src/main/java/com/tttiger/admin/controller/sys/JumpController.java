@@ -1,0 +1,77 @@
+package com.tttiger.admin.controller.sys;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+
+/**
+ * @author QinHaoTong
+ * 菜单页面跳转控制
+ */
+@Controller
+public class JumpController {
+
+    @GetMapping("/welcome")
+    public String toWelcome(){
+        return "welcome";
+    }
+
+    @GetMapping("/denied")
+    public String toDenied(){
+        return "denied";
+    }
+
+    @GetMapping("/role")
+    public String toRole(){
+        return "role";
+    }
+
+    @GetMapping("/role/to-role-add")
+    public String toRoleAdd() {
+        return "role_add";
+    }
+
+    @GetMapping("/role/to-role-update")
+    public String toRoleUpdate() {
+        return "role_update";
+    }
+
+    @GetMapping("/manager")
+    public String toManager(){
+        return "manager";
+    }
+
+    @GetMapping("/manager/to-manager-update")
+    public String toManagerUpdate(){
+        return "manager_update";
+    }
+
+    @GetMapping("/manager/to-manager-add")
+    public String toManagerAdd(){
+        return "manager_add";
+    }
+
+    @GetMapping("/manager/to-manager-authority")
+    public String toManagerAuthority(){
+        return "manager_authority";
+    }
+
+    @GetMapping("/login")
+    public String toLoginPage(){
+        return "login";
+    }
+
+    @GetMapping("/admin")
+    public String toAdminPage(){
+        return "admin";
+    }
+
+    @GetMapping("/menu")
+    public String toMenuPage(){
+        return "menu";
+    }
+
+    @GetMapping("/menu/to-menu-update")
+    public String toUpdatePage(){
+        return "menu_update";
+    }
+}

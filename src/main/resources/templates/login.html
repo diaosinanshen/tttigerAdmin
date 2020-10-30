@@ -125,12 +125,12 @@
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-icon layui-icon-username" for="username"></label>
-                    <input type="text" name="managerAccount" lay-verify="required|account" placeholder="用户名或者邮箱"
+                    <input type="text" name="username" lay-verify="required|account" placeholder="用户名或者邮箱"
                            autocomplete="off" class="layui-input" value="admin">
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-icon layui-icon-password" for="password"></label>
-                    <input type="password" name="managerPassword" lay-verify="required|password" placeholder="密码"
+                    <input type="password" name="password" lay-verify="required|password" placeholder="密码"
                            autocomplete="off" class="layui-input" value="123456">
                 </div>
                 <div class="layui-form-item">
@@ -191,13 +191,12 @@
                 "data": data,
                 "method":"post"
             },function (res) {
-                window.location.href = "/admin"
+                layer.msg("登录成功", {time:1000, icon:6},function(){
+                    window.location.href = "/admin";
+                });
+            },function (res) {
+                layer.msg(res.message, {time:1000, icon:5, shift:6});
             });
-
-
-            /*         layer.msg('登录成功', function () {
-                         window.location = '/index.html';
-                     });*/
             return false;
         });
     });

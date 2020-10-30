@@ -1,7 +1,7 @@
 package com.tttiger.admin.controller.base;
 
 
-import com.tttiger.admin.service.BaseService;
+import com.tttiger.admin.service.sys.BaseService;
 
 /**
  * @author 秦浩桐

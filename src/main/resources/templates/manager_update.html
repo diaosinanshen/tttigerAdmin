@@ -31,7 +31,11 @@
                 <input type="text" name="roleName" id="managerAccount" autocomplete="off" class="layui-input">
             </div>
         </div>
-
+        <div style="text-align:center;padding: 40px;">
+            <button class="layui-btn layui-btn-lg layui-btn-primary" onclick="closePage()">取消</button>
+            <button class="layui-btn layui-btn-lg layui-btn-normal" style="margin-left: 120px" onclick="updateManager()">添加
+            </button>
+        </div>
     </div>
 </body>
 
@@ -41,6 +45,8 @@
 <script>
     $("#managerName").val(parent.managerName);
     $("#managerAccount").val(parent.managerAccount);
+    function updateManager() {
 
+    }
 </script>
 </html>

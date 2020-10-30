@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"  xmlns:th="http://www.thymeleaf.org"
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
@@ -18,12 +18,12 @@
     <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
 </head>
 <body>
-    <div class="container" >
-        <div class="layui-row">
-            <button type="button" class="layui-btn layui-btn-normal" onclick="toAddRole()">新增</button>
-        </div>
-        <table  id="manager" lay-filter="manager"></table>
+<div class="container">
+    <div class="layui-row">
+        <button type="button" class="layui-btn layui-btn-normal" onclick="toAddManager()">新增</button>
     </div>
+    <table id="manager" lay-filter="manager"></table>
+</div>
 </body>
 
 <script src="/js/base.js" charset="utf-8"></script>
@@ -35,72 +35,83 @@
     <a class="layui-btn layui-btn-danger layui-btn-sm" lay-event="del">删除</a>
 </script>
 <script>
-    function getData(){
-        layui.use('table', function(){
+    function getData() {
+        layui.use('table', function () {
             var table = layui.table;
             var layer = layui.layer;
             table.render({
                 elem: '#manager'
-                ,url:SERVER_URL+'/manager/select'
-                ,page:true
-                ,response:{
-                    statusName:"status",
-                    statusCode:1,
-                    dataName:"data"
+                , url: SERVER_URL + '/manager/select'
+                , page: true
+                , response: {
+                    statusName: "status",
+                    statusCode: 1,
+                    dataName: "data"
                 }
-                ,parseData:function (res) {
+                , parseData: function (res) {
                     return {
-                        status:res.status,
-                        data:res.data.records,
-                        count:res.data.total,
-                        limit:res.data.size
+                        status: res.status,
+                        data: res.data.records,
+                        count: res.data.total,
+                        limit: res.data.size
                     }
                 }
-                ,cols: [ [
-                    {title: '序号', type:"numbers",align:'center'}
-                    ,{field:'managerName', title: '管理名称',align:'center'}
-                    ,{field:'managerAccount', title: '管理账号',align:'center'}
-                    ,{fixed: 'right', align:'center', toolbar: '#barDemo', title: '操作'}
+                , cols: [ [
+                    {title: '序号', type: "numbers", align: 'center'}
+                    , {field: 'managerName', title: '管理名称', align: 'center'}
+                    , {field: 'managerAccount', title: '管理账号', align: 'center'}
+                    , {fixed: 'right', align: 'center', toolbar: '#barDemo', title: '操作'}
                 ] ]
             });
         });
     }
+
     //监听工具条
     var managerName;
     var managerAccount;
     var managerId;
-    layui.use(['table'],function(){
+    layui.use(['table'], function () {
         var table = layui.table;
-        table.on('tool(manager)', function(obj){
+        table.on('tool(manager)', function (obj) {
             var data = obj.data;
-           if(obj.event === 'del'){
-                layer.confirm('确定要删除管理吗', function(index){
+            if (obj.event === 'del') {
+                layer.confirm('确定要删除管理吗', function (index) {
                     var managerId = obj.data.managerId;
                     console.log(managerId);
                     http({
-                        url:"/manager/delete",
-                        method:"post",
-                        data:{
-                            "id":managerId
+                        url: "/manager/delete",
+                        method: "post",
+                        data: {
+                            "id": managerId
                         }
-                    },function(res){
+                    }, function (res) {
                         showSuccess(res.message);
                         layer.close(index);
                         getData();
-                    },function (res) {
+                    }, function (res) {
                         showError(res.message);
                         layer.close(index);
                     });
 
                 });
-            } else if(obj.event === 'edit'){
+            } else if (obj.event === 'edit') {
                 managerName = data.managerName;
                 managerAccount = data.managerAccount;
                 managerId = data.managerId;
-                openPage("修改","/manager/manager-update",'40%','60%');
+                openPage("修改", "/manager/to-manager-update", '40%', '60%');
+            } else if (obj.event === 'authority') {
+                managerName = data.managerName;
+                managerAccount = data.managerAccount;
+                managerId = data.managerId;
+                openPage("授权", "/manager/to-manager-authority", '40%', '60%');
             }
         });
     });
+
+    function toAddManager() {
+        openPage("添加管理", "/manager/to-manager-add", '60%', '80%');
+    }
+
     getData();
 
 </script>

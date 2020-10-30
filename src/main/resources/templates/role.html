@@ -27,7 +27,6 @@
 </body>
 
 <script src="/js/base.js" charset="utf-8"></script>
-<script src="/js/base.js" charset="utf-8"></script>
 <script src="/lib/jquery-3.4.1/jquery-3.4.1.min.js" charset="utf-8"></script>
 <script src="/lib/layui-v2.5.4/layui.js" charset="utf-8"></script>
 <script type="text/html" id="barDemo">
@@ -42,6 +41,7 @@
             table.render({
                 elem: '#roles'
                 , url: SERVER_URL + '/role/select'
+                , page: true
                 , response: {
                     statusName: "status",
                     statusCode: 1,
@@ -72,9 +72,9 @@
         table.on('tool(roles)', function (obj) {
             var data = obj.data;
             if (obj.event === 'del') {
-                layer.confirm('确定要删除角色吗', function (index) {
+
+                layer.confirm('确定要删除'+ obj.data.roleName+'角色吗', function (index) {
                     var roleId = obj.data.roleId;
-                    console.log(roleId);
                     http({
                         url: "/role/delete",
                         method: "post",

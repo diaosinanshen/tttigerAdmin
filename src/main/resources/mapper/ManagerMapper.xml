@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.tttiger.admin.mapper.ManagerMapper">
+<mapper namespace="com.tttiger.admin.mapper.sys.ManagerMapper">
 
-    <resultMap id="managerAndRole" type="com.tttiger.admin.bean.Manager">
+    <resultMap id="managerAndRole" type="com.tttiger.admin.bean.sys.Manager">
         <id property="managerId" column="manager_id"/>
         <result property="managerName" column="manager_name"/>
         <result property="managerAccount" column="manager_account"/>
         <result property="managerPassword" column="manager_password"/>
-        <collection property="roles" ofType="com.tttiger.admin.bean.Role">
+        <collection property="roles" ofType="com.tttiger.admin.bean.sys.Role">
             <result property="roleId" column="role_id"/>
             <result property="roleName" column="role_name"/>
         </collection>
     </resultMap>
 
-    <select id="selectManagerAndRoles" resultMap="managerAndRole">
+     <select id="selectManagerAndRoles" resultMap="managerAndRole">
         select m.*,r.* from manager m
         left join manager_role mr on mr.manager_id = m.manager_id
         left join role r on mr.role_id = r.role_id

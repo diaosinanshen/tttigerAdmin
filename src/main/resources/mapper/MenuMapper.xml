@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.tttiger.admin.mapper.MenuMapper">
+<mapper namespace="com.tttiger.admin.mapper.sys.MenuMapper">
 
-    <resultMap id="menuAndRole" type="com.tttiger.admin.bean.Menu">
+    <resultMap id="menuAndRole" type="com.tttiger.admin.bean.sys.Menu">
         <id property="menuId" column="menu_id"/>
         <result property="href" column="href"/>
         <result property="title" column="title"/>
         <result property="parentMenu" column="parent_menu"/>
 
-        <collection property="roles" ofType="com.tttiger.admin.bean.Role">
+        <collection property="roles" ofType="com.tttiger.admin.bean.sys.Role">
             <result property="roleId" column="role_id"/>
             <result property="roleName" column="role_name"/>
         </collection>
@@ -22,7 +22,7 @@
     </select>
 
 
-    <select id="selectUserHasAuthorityMenu" resultType="com.tttiger.admin.bean.Menu">
+    <select id="selectUserHasAuthorityMenu" resultType="com.tttiger.admin.bean.sys.Menu">
         select m.* from manager ma
         inner join manager_role mr on mr.manager_id = ma.manager_id
         inner join role r on r.role_id = mr.role_id
@@ -31,7 +31,7 @@
         where ma.manager_account = #{account}
     </select>
 
-    <select id="selectMenuByRoleId" resultType="com.tttiger.admin.bean.Menu">
+    <select id="selectMenuByRoleId" resultType="com.tttiger.admin.bean.sys.Menu">
         select m.* from role_menu rm
         right join menu m on rm.menu_id = m.menu_id
         where rm.role_id = #{roleId} and m.parent_menu != -1

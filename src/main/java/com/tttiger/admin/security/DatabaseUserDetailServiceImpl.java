@@ -1,7 +1,7 @@
 package com.tttiger.admin.security;
 
-import com.tttiger.admin.bean.Manager;
-import com.tttiger.admin.mapper.ManagerMapper;
+import com.tttiger.admin.bean.sys.Manager;
+import com.tttiger.admin.mapper.sys.ManagerMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

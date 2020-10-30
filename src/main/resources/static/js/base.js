@@ -15,9 +15,9 @@ function http(param, successCallback, failureCallback) {
         }
     }
     param.success = function (res) {
-        if (res.status == 1) {
+        if (res.status == '1') {
             successCallback(res);
-        } else if (res.status == 0) {
+        } else if (res.status == '0') {
             failureCallback(res);
         } else{
             console.log("请求未找到匹配状态")
@@ -35,6 +35,8 @@ function showSuccess(message,after) {
             if(after != null){
                 setTimeout(after,2000);
             }
+        }else{
+            throw new Error("messages不能为null");
         }
     })
 }

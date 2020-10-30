@@ -44,8 +44,8 @@
 <script>
     var menuTree;
     layui.use(['tree', 'util'], function () {
-        menuTree = layui.tree
-        var layer = layui.layer
+        menuTree = layui.tree;
+        var layer = layui.layer;
         var util = layui.util;
         http({
             url: "/role/select-menu"
@@ -102,12 +102,13 @@
             contentType: "application/json",
             dataType: "json"
         }, function (res) {
-            showSuccess(res.message);
+            showSuccess(res.message,function () {
+                closePage();
+            });
         }, function (res) {
             showError(res.message)
         })
     }
-
     function closePage() {
         var index = parent.layer.getFrameIndex(window.name);
         parent.layer.close(index);

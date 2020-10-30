@@ -124,6 +124,7 @@
             dataType: "json"
         }, function (res) {
             parent.showSuccess(res.message);
+            parent.getData();
             closePage();
         }, function (res) {
             showError(res.message)

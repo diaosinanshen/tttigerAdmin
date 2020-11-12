@@ -10,6 +10,7 @@ import com.tttiger.admin.service.sys.BaseService;
 import com.tttiger.admin.service.sys.ManagerService;
 import com.tttiger.admin.service.sys.RoleService;
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -57,6 +58,7 @@ public class ManagerController implements BaseCrudController<Manager> {
     @GetMapping("/select/authority")
     @ResponseBody
     @CommonValid
+    @Cacheable(cacheNames = "selectManagerRole",keyGenerator = "keyGenerator")
     public ResultMap selectManagerRole(@NotBlank(message = "非法参数") String managerAccount){
         return managerService.selectAuthRole(managerAccount);
     }

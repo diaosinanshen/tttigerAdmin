@@ -58,6 +58,19 @@ layui.define(['layer', 'table'], function (exports) {
             };
             sort(param.treeSpid, tNodes);
 
+            // 自己添加的按自定义排序字段进行重排序
+            var resort = function (data) {
+                for (var i = 0; i < data.length - 1; i++) {
+                    for (var k = i + 1; k < data.length; k++) {
+                        if (data[i].sort > data[k].sort) {
+                            var temp = data[i];
+                            data[i] = data[k];
+                            data[k] = temp;
+                        }
+                    }
+                }
+            };
+            resort(mData);
             // 重写参数
             param.url = undefined;
             param.data = mData;
@@ -74,10 +87,17 @@ layui.define(['layer', 'table'], function (exports) {
                 for (var i = 0; i < emptyNum; i++) {
                     iconHtml += '<span class="treeTable-empty"></span>';
                 }
-                if (isDir) {
+     /*           if (isDir) {
                     iconHtml += '<i class="layui-icon layui-icon-triangle-d"></i> <i class="layui-icon layui-icon-layer"></i>';
                 } else {
                     iconHtml += '<i class="layui-icon layui-icon-file"></i>';
+                }*/
+
+                // 自己添加的自定义treeTable展示图标
+                if (isDir) {
+                    iconHtml += '<i class="layui-icon layui-icon-triangle-d"></i> <i class="fa '+d.icon+'"></i>';
+                } else {
+                    iconHtml += '<i class="fa '+d.icon+' "></i>';
                 }
                 iconHtml += '&nbsp;&nbsp;';
                 var ttype = isDir ? 'dir' : 'file';

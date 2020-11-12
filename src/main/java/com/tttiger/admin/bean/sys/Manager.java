@@ -30,10 +30,11 @@ public class Manager extends BaseBean {
 
     @AutoWrapper(value = Like.class, group = {SelectPage.class})
     @NotBlank(message = "管理名称不能为空",groups = {Add.class, Update.class})
+    @Length(min = 2,message = "名称最少需要字符",groups = {Add.class, Update.class} )
     private String managerName;
 
     @AutoWrapper(value = Eq.class, group = {SelectPage.class})
-    @Length(min = 4,max = 12,message = "请输入4至12位账号")
+    @Length(min = 6,max = 12,message = "请输入6至12位账号")
     private String managerAccount;
 
     @Length(min = 6,max = 12,message = "请输入6至12位密码",groups = {Add.class, Update.class})

@@ -13,9 +13,6 @@
     <meta name="format-detection" content="telephone=no">
     <link rel="stylesheet" href="/lib/layui-v2.5.4/css/layui.css" media="all"/>
     <link rel="stylesheet" href="/css/public.css" media="all"/>
-    <!--[if lt IE 9]> -->
-    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
-    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -56,8 +53,8 @@
                     }
                 }
                 , cols: [ [
-                    {title: '序号', type: "numbers"}
-                    , {field: 'roleName', title: '角色名称'}
+                    {title: '序号',align: 'center', type: "numbers"}
+                    , {field: 'roleName', align: 'center',title: '角色名称'}
                     , {fixed: 'right', align: 'center', toolbar: '#barDemo', title: '操作'}
                 ] ]
             });

@@ -74,6 +74,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         auth.authenticationProvider(authenticationProvider);
     }
 
+
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         // 在用户认证前添加验证码拦截器

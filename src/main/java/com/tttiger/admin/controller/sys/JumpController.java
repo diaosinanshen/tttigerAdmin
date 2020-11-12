@@ -40,11 +40,6 @@ public class JumpController {
         return "manager";
     }
 
-    @GetMapping("/manager/to-manager-update")
-    public String toManagerUpdate(){
-        return "manager_update";
-    }
-
     @GetMapping("/manager/to-manager-add")
     public String toManagerAdd(){
         return "manager_add";
@@ -71,7 +66,17 @@ public class JumpController {
     }
 
     @GetMapping("/menu/to-menu-update")
-    public String toUpdatePage(){
+    public String toUpdateMenuPage(){
         return "menu_update";
+    }
+
+    @GetMapping("/task")
+    public String toTaskPage(){
+        return "task";
+    }
+
+    @GetMapping("/task/to-task-update")
+    public String toUpdateTaskPage(){
+        return "task_update";
     }
 }

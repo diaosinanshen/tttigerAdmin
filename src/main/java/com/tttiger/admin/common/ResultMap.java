@@ -19,6 +19,7 @@ public class ResultMap {
     public static ResultMap success() {
         ResultMap resultMap = new ResultMap();
         resultMap.setStatus(ResultMap.SUCCESS);
+        resultMap.setMessage("操作成功");
         return resultMap;
     }
 

@@ -34,6 +34,7 @@ public class LoginController {
 
     private MenuService menuService;
 
+
     @GetMapping("/captcha")
     public void getLoginCaptcha(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws IOException {
         response.setHeader("Pragma", "no-cache");

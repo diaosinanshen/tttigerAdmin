@@ -152,6 +152,7 @@
     </div>
 </div>
 <script src="/js/base.js" charset="utf-8"></script>
+<script src="/js/jsencrypt.js" charset="utf-8"></script>
 <script src="/lib/jquery-3.4.1/jquery-3.4.1.min.js" charset="utf-8"></script>
 <script src="/lib/layui-v2.5.4/layui.js" charset="utf-8"></script>
 <script src="/lib/jq-module/jquery.particleground.min.js" charset="utf-8"></script>
@@ -198,6 +199,37 @@
                 layer.msg(res.message, {time:1000, icon:5, shift:6});
             });
             return false;
+        });
+    });
+
+    http({
+        url: "/pub-key",
+        method: "get",
+    }, function (res) {
+        sessionStorage.setItem("serverPublicKey",res.data);
+        var crypt = new JSEncrypt({default_key_size: 1024});
+        crypt.getKey();
+        var clientPrivateKey = crypt.getPrivateKeyB64();
+        var clientPublicKey = crypt.getPublicKeyB64();
+        sessionStorage.setItem("clientPrivateKey",clientPrivateKey);
+        sessionStorage.setItem("clientPublicKey",clientPublicKey);
+
+        var encrypt = new JSEncrypt({default_key_size: 1024});
+        encrypt.setPublicKey(res.data);
+        var encryptedPubKey = encrypt.encryptLong(clientPublicKey);
+
+        http({
+            url: "/security-confirm",
+            method: "post",
+            data: {
+                "clientKey":encryptedPubKey
+            }
+        },function(res) {
+            var decrypt = new JSEncrypt({default_key_size: 1024});
+            var clientPrivateKey = sessionStorage.getItem("clientPrivateKey");
+            decrypt.setPrivateKey(clientPrivateKey);
+            var aesKey = decrypt.decrypt(res.data);
+            sessionStorage.setItem("transportAesKey",aesKey);
         });
     });
 

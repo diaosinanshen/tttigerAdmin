@@ -1,4 +1,4 @@
-package com.tttiger.admin.common;
+package com.tttiger.admin.common.task;
 
 import com.tttiger.admin.bean.sys.Task;
 import lombok.AllArgsConstructor;

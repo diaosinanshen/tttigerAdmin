@@ -1,9 +1,10 @@
 var SERVER_URL = "http://localhost:8888";
-
+// 自动包含加密js
+document.write ('<script src="/cryptojs/rollups/aes.js"></script>');
 /**
  * 封装请求，同意验证后台处理，添加基础路径
  */
-function http(param, successCallback, failureCallback) {
+function http(param, successCallback, failureCallback,dataEncrypt,resultDecrypt) {
     if(successCallback == null){
         successCallback = function (res) {
             console.log(res)
@@ -14,7 +15,15 @@ function http(param, successCallback, failureCallback) {
             console.log(res)
         }
     }
+    if(dataEncrypt){
+        var temp = Encrypt(param.data);
+        debugger
+        param.data = temp;
+    }
     param.success = function (res) {
+        if(resultDecrypt){
+           res = JSON.parse(Decrypt(res));
+        }
         if (res.status == '1') {
             successCallback(res);
         } else if (res.status == '0') {
@@ -22,7 +31,7 @@ function http(param, successCallback, failureCallback) {
         } else{
             console.log("请求未找到匹配状态")
         }
-    }
+    };
     param.url = SERVER_URL + param.url;
     $.ajax(param);
 }
@@ -51,6 +60,45 @@ function showError(message,after) {
             }
         }
     })
+}
+
+
+/**
+ * AES 解密
+ * @param word 密文
+ * @returns {string} 明文
+ */
+function Decrypt(word) {
+    var key  = CryptoJS.enc.Utf8.parse(aesKey());
+    var iv   = CryptoJS.enc.Utf8.parse('yNGY816Y3W155JFV');
+    var decrypted =CryptoJS.AES.decrypt(word,key,
+        {
+            iv:iv,
+            mode:CryptoJS.mode.CBC,
+            padding:CryptoJS.pad.Pkcs7
+        });
+    return decrypted.toString(CryptoJS.enc.Utf8);
+}
+
+/**
+ * AES 加密
+ * @param word 密文
+ * @returns {string} 明文
+ */
+function Encrypt(word) {
+    var key  = CryptoJS.enc.Utf8.parse(aesKey());
+    var iv   = CryptoJS.enc.Utf8.parse('yNGY816Y3W155JFV');
+    var encrypted =CryptoJS.AES.encrypt(word,key,
+        {
+            iv:iv,
+            mode:CryptoJS.mode.CBC,
+            padding:CryptoJS.pad.Pkcs7
+        });
+    return encrypted.toString();
+}
+
+function aesKey(){
+    return sessionStorage.getItem("transportAesKey");
 }
 
 /**

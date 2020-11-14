@@ -3,6 +3,7 @@ package com.tttiger.admin.controller.sys;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.tttiger.admin.bean.sys.Manager;
 import com.tttiger.admin.common.ResultMap;
+import com.tttiger.admin.common.annotation.security.SecurityParameter;
 import com.tttiger.admin.common.annotation.validate.Add;
 import com.tttiger.admin.common.annotation.validate.CommonValid;
 import com.tttiger.admin.controller.base.BaseCrudController;
@@ -10,8 +11,6 @@ import com.tttiger.admin.service.sys.BaseService;
 import com.tttiger.admin.service.sys.ManagerService;
 import com.tttiger.admin.service.sys.RoleService;
 import lombok.AllArgsConstructor;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,7 +22,7 @@ import javax.validation.constraints.NotBlank;
  * @Date 2019/11/22 16:04
  * @Description
  */
-@Controller
+@RestController
 @RequestMapping("/manager")
 @AllArgsConstructor
 public class ManagerController implements BaseCrudController<Manager> {
@@ -33,11 +32,12 @@ public class ManagerController implements BaseCrudController<Manager> {
     private RoleService roleService;
 
     @Override
+    @SecurityParameter
     public ResultMap add(@RequestBody @Validated(Add.class) Manager manager) {
         if(manager.getManagerPassword().equals(manager.getCheckPassword())){
             QueryWrapper<Manager> wrapper = new QueryWrapper<>();
             wrapper.lambda().eq(Manager::getManagerAccount,manager.getManagerAccount());
-            ResultMap resultMap = managerService.selectList(wrapper);
+            ResultMap resultMap = managerService.selectOne(wrapper);
             if(!resultMap.isEmpty()){
                 return ResultMap.fail().message("账号冲突");
             }
@@ -48,17 +48,16 @@ public class ManagerController implements BaseCrudController<Manager> {
     }
 
     @GetMapping("/select-role")
-    public String getRole(){
-        return "forward:/role/select-all";
+    public ResultMap getRole(){
+        return roleService.selectList(null);
     }
 
     /**
      * 查询管理拥有的角色
      */
     @GetMapping("/select/authority")
-    @ResponseBody
     @CommonValid
-    @Cacheable(cacheNames = "selectManagerRole",keyGenerator = "keyGenerator")
+    @SecurityParameter(decrypt = false)
     public ResultMap selectManagerRole(@NotBlank(message = "非法参数") String managerAccount){
         return managerService.selectAuthRole(managerAccount);
     }
@@ -70,7 +69,6 @@ public class ManagerController implements BaseCrudController<Manager> {
      * @return
      */
     @PostMapping("/auth")
-    @ResponseBody
     public ResultMap auth(@RequestBody Manager manager){
         if(manager.getManagerId() == null){
             return ResultMap.fail().message("管理人员不存在");

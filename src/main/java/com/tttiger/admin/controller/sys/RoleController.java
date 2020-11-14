@@ -34,11 +34,9 @@ public class RoleController implements BaseCrudController<Role> {
     private MenuService menuService;
 
 
-
-
     @GetMapping("/select-menu")
-    public String selectMenu() {
-        return "forward:/menu/select-all";
+    public ResultMap selectMenu() {
+        return ResultMap.success().data(menuService.selectAll());
     }
 
     @GetMapping("/select-all")

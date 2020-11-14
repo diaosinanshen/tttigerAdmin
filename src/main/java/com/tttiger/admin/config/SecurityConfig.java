@@ -88,7 +88,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .successHandler(successHandler)
                 .and()
 
-                .authorizeRequests().antMatchers("/captcha", "/js/**", "/css/**",
+                .authorizeRequests().antMatchers("/captcha", "/pub-key","/security-confirm","/js/**", "/css/**",
                 "/layui/**", "/lib/**", "/images/**","/favicon.ico").permitAll()
                 .and()
 

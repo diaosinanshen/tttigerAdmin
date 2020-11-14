@@ -11,5 +11,7 @@ import java.lang.annotation.Target;
  */
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Encryption {
+public @interface SecurityParameter {
+    boolean decrypt() default true;
+    boolean encrypt() default true;
 }

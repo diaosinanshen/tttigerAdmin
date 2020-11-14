@@ -2,7 +2,7 @@ package com.tttiger.admin.service.sys.iml;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.tttiger.admin.bean.sys.Task;
-import com.tttiger.admin.common.QuartzManager;
+import com.tttiger.admin.common.task.QuartzManager;
 import com.tttiger.admin.common.ResultMap;
 import com.tttiger.admin.mapper.sys.TaskMapper;
 import com.tttiger.admin.service.sys.TaskService;

@@ -33,7 +33,6 @@ public class TaskController implements BaseSelectPageController<Task> {
     @CommonValid
     @PostMapping("/pause")
     public ResultMap pauseTask(@NotNull(message = "定时任务ID缺失") Integer taskId) throws SchedulerException {
-
         return taskService.pauseTask(taskId);
     }
 

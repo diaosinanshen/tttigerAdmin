@@ -4,6 +4,7 @@ import org.apache.tomcat.util.codec.binary.Base64;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import javax.crypto.Cipher;
+import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
@@ -29,7 +30,7 @@ public class AesUtil {
      * 算法名称/加密模式/数据填充方式
      * 默认：AES/ECB/PKCS5Padding
      */
-    private static final String ALGORITHMS = "AES/ECB/PKCS5Padding";
+    private static final String ALGORITHMS = "AES/CBC/PKCS7Padding";
 
     /**
      * 后端AES的key，由静态代码块赋值
@@ -43,13 +44,13 @@ public class AesUtil {
     private static final BouncyCastleProvider PROVIDER = new BouncyCastleProvider();
 
     static {
-        key = getKey();
+        key = generateKey();
     }
 
     /**
      * 获取key
      */
-    public static String getKey() {
+    public static String generateKey() {
         StringBuilder uid = new StringBuilder();
         //产生16位的强随机数
         Random rd = new SecureRandom();
@@ -76,6 +77,7 @@ public class AesUtil {
         return uid.toString();
     }
 
+
     /**
      * 加密
      *
@@ -85,8 +87,8 @@ public class AesUtil {
     public static String encrypt(String content, String encryptKey) throws Exception {
         //设置Cipher对象
         Cipher cipher = Cipher.getInstance(ALGORITHMS, PROVIDER);
-        cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(encryptKey.getBytes(), KEY_ALGORITHM));
-
+        IvParameterSpec iv = new IvParameterSpec("yNGY816Y3W155JFV".getBytes());
+        cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(encryptKey.getBytes(), KEY_ALGORITHM),iv);
         //调用doFinal
         // 转base64
         return Base64.encodeBase64String(cipher.doFinal(content.getBytes(StandardCharsets.UTF_8)));
@@ -105,7 +107,8 @@ public class AesUtil {
 
         //设置Cipher对象
         Cipher cipher = Cipher.getInstance(ALGORITHMS,PROVIDER);
-        cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(decryptKey.getBytes(), KEY_ALGORITHM));
+        IvParameterSpec iv = new IvParameterSpec("yNGY816Y3W155JFV".getBytes());
+        cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(decryptKey.getBytes(), KEY_ALGORITHM),iv);
 
         //调用doFinal解密
         return new String(cipher.doFinal(decodeBase64));

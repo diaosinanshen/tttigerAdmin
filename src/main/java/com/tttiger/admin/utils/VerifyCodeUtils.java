@@ -1,4 +1,4 @@
-package com.tttiger.admin.common;
+package com.tttiger.admin.utils;
 
 import javax.imageio.ImageIO;
 import java.awt.*;

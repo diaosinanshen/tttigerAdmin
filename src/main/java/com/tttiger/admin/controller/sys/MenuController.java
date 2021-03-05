@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/menu")
 public class MenuController{
@@ -16,17 +18,17 @@ public class MenuController{
     private MenuService menuService;
 
     @GetMapping("/select-all")
-    public ResultMap selectAllMenu(){
-        return ResultMap.success().data(menuService.selectAll());
+    public ResultMap<List<Menu>> selectAllMenu(){
+        return ResultMap.data(menuService.selectAll()).success();
     }
 
     @GetMapping("/select")
-    public ResultMap selectMenu(){
+    public ResultMap<List<Menu>> selectMenu(){
         return menuService.selectList(null);
     }
 
     @PostMapping("/update")
-    public ResultMap updateMenu(@RequestBody @Validated(Update.class) Menu menu){
+    public ResultMap<Object> updateMenu(@RequestBody @Validated(Update.class) Menu menu){
         return menuService.updateById(menu);
     }
 }

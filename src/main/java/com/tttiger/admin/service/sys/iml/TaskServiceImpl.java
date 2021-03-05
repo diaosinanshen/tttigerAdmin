@@ -26,11 +26,11 @@ public class TaskServiceImpl implements TaskService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public ResultMap pauseTask(Integer taskId) throws SchedulerException {
+    public ResultMap<Object> pauseTask(Integer taskId) throws SchedulerException {
         Task pauseTask = taskMapper.selectById(taskId);
         // 本身是暂停状态，直接返回成功
         if(pauseTask.getJobStatus().equals(Task.INACTIVE)){
-            return ResultMap.success();
+            return ResultMap.data().success();
         }
         Task task = new Task();
         task.setId(taskId);
@@ -38,9 +38,9 @@ public class TaskServiceImpl implements TaskService {
         if(taskMapper.updateById(task) == 1){
             // 直接删除任务
             quartzManager.deleteJob(pauseTask);
-            return ResultMap.success();
+            return ResultMap.data().success();
         }
-        return ResultMap.fail();
+        return ResultMap.data().fail();
     }
 
 
@@ -53,27 +53,27 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public ResultMap updateTask(Task task) throws SchedulerException {
+    public ResultMap<Object> updateTask(Task task) throws SchedulerException {
         Task updateTask = taskMapper.selectById(task.getId());
         if(updateTask.getJobStatus().equals(Task.INACTIVE)){
             if(taskMapper.updateById(task) == 1){
-                return ResultMap.success();
+                return ResultMap.data().success();
             }
-            return ResultMap.fail().message("请先暂停任务");
+            return ResultMap.data().fail().message("请先暂停任务");
         }else if(updateTask.getJobStatus().equals(Task.ACTIVE)){
             if (taskMapper.updateById(task) == 1) {
                 updateTask = taskMapper.selectById(task.getId());
                 quartzManager.updateJobCron(updateTask);
-                return ResultMap.success();
+                return ResultMap.data().success();
             }
         }
-        return ResultMap.fail();
+        return ResultMap.data().fail();
     }
 
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ResultMap resumeTask(Integer taskId) throws SchedulerException {
+    public ResultMap<Object> resumeTask(Integer taskId) throws SchedulerException {
         Task task = taskMapper.selectById(taskId);
         if(task.getJobStatus().equals(Task.INACTIVE)){
             Task resumeTask = new Task();
@@ -83,10 +83,10 @@ public class TaskServiceImpl implements TaskService {
                 // 添加更新后的任务
                 task = taskMapper.selectById(taskId);
                 quartzManager.addJob(task);
-                return ResultMap.success();
+                return ResultMap.data().success();
             }
         }
-        return ResultMap.fail();
+        return ResultMap.data().fail();
     }
 
     @Override

@@ -1,7 +1,10 @@
 package com.tttiger.admin.service.sys;
 
 import com.tttiger.admin.bean.sys.Manager;
+import com.tttiger.admin.bean.sys.Role;
 import com.tttiger.admin.common.ResultMap;
+
+import java.util.List;
 
 /**
  * @author 秦浩桐
@@ -16,12 +19,12 @@ public interface ManagerService extends BaseService<Manager> {
      * @param account 管理账号
      * @return 响应实体
      */
-    ResultMap selectAuthRole(String account);
+    ResultMap<List<Role>>  selectAuthRole(String account);
 
     /**
      * 更新管理人员角色权限
      * @param manager 包含更新角色的管理人员
      * @return 响应实体
      */
-    ResultMap auth(Manager manager);
+    ResultMap<Object> auth(Manager manager);
 }

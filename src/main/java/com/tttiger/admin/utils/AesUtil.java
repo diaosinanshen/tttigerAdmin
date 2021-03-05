@@ -1,5 +1,6 @@
 package com.tttiger.admin.utils;
 
+import com.tttiger.admin.bean.sys.security.Aes;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
@@ -32,10 +33,6 @@ public class AesUtil {
      */
     private static final String ALGORITHMS = "AES/CBC/PKCS7Padding";
 
-    /**
-     * 后端AES的key，由静态代码块赋值
-     */
-    public static String key;
 
     /**
      * 不能在代码中创建
@@ -43,8 +40,13 @@ public class AesUtil {
      */
     private static final BouncyCastleProvider PROVIDER = new BouncyCastleProvider();
 
-    static {
-        key = generateKey();
+
+    /**
+     * 生成Aes加密
+     * @return Aes封装类
+     */
+    public static Aes generateAes(){
+       return new Aes(generateKey(),generateKey());
     }
 
     /**
@@ -84,15 +86,14 @@ public class AesUtil {
      * @param content    加密的字符串
      * @param encryptKey key值
      */
-    public static String encrypt(String content, String encryptKey) throws Exception {
+    public static String encrypt(String content, String encryptKey,String offset) throws Exception {
         //设置Cipher对象
         Cipher cipher = Cipher.getInstance(ALGORITHMS, PROVIDER);
-        IvParameterSpec iv = new IvParameterSpec("yNGY816Y3W155JFV".getBytes());
+        IvParameterSpec iv = new IvParameterSpec(offset.getBytes());
         cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(encryptKey.getBytes(), KEY_ALGORITHM),iv);
         //调用doFinal
         // 转base64
         return Base64.encodeBase64String(cipher.doFinal(content.getBytes(StandardCharsets.UTF_8)));
-
     }
 
     /**
@@ -101,13 +102,13 @@ public class AesUtil {
      * @param encryptStr 解密的字符串
      * @param decryptKey 解密的key值
      */
-    public static String decrypt(String encryptStr, String decryptKey) throws Exception {
+    public static String decrypt(String encryptStr, String decryptKey,String offset) throws Exception {
         //base64格式的key字符串转byte
         byte[] decodeBase64 = Base64.decodeBase64(encryptStr);
 
         //设置Cipher对象
         Cipher cipher = Cipher.getInstance(ALGORITHMS,PROVIDER);
-        IvParameterSpec iv = new IvParameterSpec("yNGY816Y3W155JFV".getBytes());
+        IvParameterSpec iv = new IvParameterSpec(offset.getBytes());
         cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(decryptKey.getBytes(), KEY_ALGORITHM),iv);
 
         //调用doFinal解密

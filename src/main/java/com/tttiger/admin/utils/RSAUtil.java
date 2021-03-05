@@ -1,6 +1,7 @@
 package com.tttiger.admin.utils;
 
 
+import com.tttiger.admin.bean.sys.security.Rsa;
 import org.apache.tomcat.util.codec.binary.Base64;
 
 import javax.crypto.Cipher;
@@ -8,8 +9,6 @@ import java.io.ByteArrayOutputStream;
 import java.security.*;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * RSA加密和解密工具
@@ -44,7 +43,7 @@ public class RSAUtil {
     /**
      * 生成密钥对
      */
-    public static Map<String, String> generateKey() throws Exception {
+    public static Rsa generateKey() throws Exception {
         KeyPairGenerator keygen = KeyPairGenerator.getInstance(RSA_KEY_ALGORITHM);
         SecureRandom secrand = new SecureRandom();
         /**
@@ -63,10 +62,7 @@ public class RSAUtil {
         byte[] pri_key = keys.getPrivate().getEncoded();
         String privateKeyString = Base64.encodeBase64String(pri_key);
 
-        Map<String, String> keyPairMap = new HashMap<>();
-        keyPairMap.put("publicKeyString", publicKeyString);
-        keyPairMap.put("privateKeyString", privateKeyString);
-        return keyPairMap;
+        return new Rsa(publicKeyString,privateKeyString);
     }
 
     /**
@@ -336,9 +332,9 @@ public class RSAUtil {
 
     public static void main(String[] args) {
         try {
-            Map<String, String> keyMap = generateKey();
-            String publicKeyString = keyMap.get("publicKeyString");
-            String privateKeyString = keyMap.get("privateKeyString");
+            Rsa rsa = generateKey();
+            String publicKeyString = rsa.getPublicKeyString();
+            String privateKeyString = rsa.getPrivateKeyString();
             System.out.println("公钥:" + publicKeyString);
             System.out.println("私钥:" + privateKeyString);
 

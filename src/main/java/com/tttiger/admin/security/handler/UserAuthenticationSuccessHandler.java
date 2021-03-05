@@ -24,8 +24,8 @@ public class UserAuthenticationSuccessHandler implements AuthenticationSuccessHa
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         response.setCharacterEncoding("utf-8");
         response.setContentType("application/json");
-        ResultMap message = ResultMap.success().message("登录成功");
+        ResultMap message = ResultMap.data().success().message("登录成功");
         response.getWriter().write(JSONObject.toJSONString(message));
-        log.info(authentication.getName()+"退出登录");
+        log.info(authentication.getName()+"登录");
     }
 }

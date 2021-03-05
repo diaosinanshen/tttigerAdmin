@@ -29,11 +29,11 @@ public interface BaseService<T> {
      * @param t 数据实体
      * @return 是否成功
      */
-    default ResultMap insert(T t) {
+    default ResultMap<Object> insert(T t) {
         if (getMapper().insert(t) == 1) {
-            return ResultMap.success().message("添加成功");
+            return ResultMap.data().success().message("添加成功");
         }
-        return ResultMap.fail();
+        return ResultMap.data().fail();
     }
 
 
@@ -43,12 +43,12 @@ public interface BaseService<T> {
      * @param wrapper 查询条件
      * @return 查询结果
      */
-    default ResultMap selectList(Wrapper<T> wrapper) {
+    default ResultMap<List<T>> selectList(Wrapper<T> wrapper) {
         List<T> ts = getMapper().selectList(wrapper);
         if (ts.isEmpty()) {
-            return ResultMap.fail().message("未找到匹配数据").data(ts);
+            return ResultMap.data(ts).fail().message("未找到匹配数据");
         }
-        return ResultMap.success().data(ts);
+        return ResultMap.data(ts).success();
     }
 
     /**
@@ -57,12 +57,12 @@ public interface BaseService<T> {
      * @param wrapper 查询条件
      * @return 查询结果
      */
-    default ResultMap selectOne(Wrapper<T> wrapper) {
+    default ResultMap<T> selectOne(Wrapper<T> wrapper) {
         T t = getMapper().selectOne(wrapper);
         if (t == null) {
-            return ResultMap.fail().message("未找到匹配数据");
+            return ResultMap.data(t).fail().message("未找到匹配数据");
         }
-        return ResultMap.fail().message("查询成功").data(t);
+        return ResultMap.data(t).fail().message("查询成功");
     }
 
 
@@ -72,12 +72,12 @@ public interface BaseService<T> {
      * @param id 主键id
      * @return 查询结果
      */
-    default ResultMap selectById(Serializable id) {
+    default ResultMap<T> selectById(Serializable id) {
         T t = getMapper().selectById(id);
         if (t == null) {
-            return ResultMap.fail().message("未找到匹配数据");
+            return ResultMap.data(t).fail().message("未找到匹配数据");
         }
-        return ResultMap.fail().message("查询成功").data(t);
+        return ResultMap.data(t).fail().message("查询成功");
     }
 
     /**
@@ -87,12 +87,12 @@ public interface BaseService<T> {
      * @param wrapper 查询条件
      * @return 查询结果
      */
-    default ResultMap selectPage(IPage<T> page, Wrapper<T> wrapper) {
+    default ResultMap<IPage<T>> selectPage(IPage<T> page, Wrapper<T> wrapper) {
         IPage<T> tiPage = getMapper().selectPage(page, wrapper);
         if (tiPage.getRecords().isEmpty()) {
-            return ResultMap.fail().message("未找到匹配数据");
+            return ResultMap.data(tiPage).fail().message("未找到匹配数据");
         }
-        return ResultMap.success().message("查询成功").data(tiPage);
+        return ResultMap.data(tiPage).success().message("查询成功");
     }
 
 
@@ -102,11 +102,11 @@ public interface BaseService<T> {
      * @param t 实体
      * @return 是否更新成功
      */
-    default ResultMap updateById(T t) {
+    default ResultMap<Object> updateById(T t) {
         if (getMapper().updateById(t) == 1) {
-            return ResultMap.success().message("更新成功").data(t);
+            return ResultMap.data().success().message("更新成功");
         }
-        return ResultMap.fail().message("更新失败");
+        return ResultMap.data().fail().message("更新失败");
     }
 
     /**
@@ -115,11 +115,11 @@ public interface BaseService<T> {
      * @param wrapper 条件
      * @return 是否更新成功
      */
-    default ResultMap update(T t, Wrapper<T> wrapper) {
+    default ResultMap<Object> update(T t, Wrapper<T> wrapper) {
         if (getMapper().update(t, wrapper) == 1) {
-            return ResultMap.success().message("更新成功").data(t);
+            return ResultMap.data().success().message("更新成功");
         }
-        return ResultMap.fail().message("更新失败");
+        return ResultMap.data().fail().message("更新失败");
     }
 
 
@@ -129,11 +129,11 @@ public interface BaseService<T> {
      * @param id 主键id
      * @return 是否删除成功
      */
-    default ResultMap delete(Serializable id) {
+    default ResultMap<Object> delete(Serializable id) {
         if (getMapper().deleteById(id) == 1) {
-            return ResultMap.success().message("删除成功");
+            return ResultMap.data().success().message("删除成功");
         }
-        return ResultMap.fail().message("删除失败");
+        return ResultMap.data().fail().message("删除失败");
     }
 
     /**
@@ -142,11 +142,11 @@ public interface BaseService<T> {
      * @param wrapper 条件封装
      * @return 是否删除成功
      */
-    default ResultMap delete(Wrapper<T> wrapper) {
+    default ResultMap<Object> delete(Wrapper<T> wrapper) {
         int deleted = getMapper().delete(wrapper);
         if(deleted>0){
-            return ResultMap.success().message(String.format("成功删除 {} 条", deleted));
+            return ResultMap.data().success().message(String.format("成功删除 {} 条", deleted));
         }
-        return ResultMap.fail().message("成功 0 条数据");
+        return ResultMap.data().fail().message("成功 0 条数据");
     }
 }

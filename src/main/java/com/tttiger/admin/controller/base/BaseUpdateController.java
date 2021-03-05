@@ -21,7 +21,7 @@ public interface BaseUpdateController<T> extends BaseController<T> {
      */
     @PostMapping("/update")
     @ResponseBody
-    default ResultMap update(@Validated(Update.class) T t) {
+    default ResultMap<Object> update(@Validated(Update.class) T t) {
         return getService().updateById(t);
     }
 }

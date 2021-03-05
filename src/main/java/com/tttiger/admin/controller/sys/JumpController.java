@@ -45,6 +45,11 @@ public class JumpController {
         return "manager_add";
     }
 
+    @GetMapping("/manager/to-change-pwd")
+    public String toChangePassword(){
+        return "change_password";
+    }
+
     @GetMapping("/manager/to-manager-authority")
     public String toManagerAuthority(){
         return "manager_authority";
@@ -78,5 +83,15 @@ public class JumpController {
     @GetMapping("/task/to-task-update")
     public String toUpdateTaskPage(){
         return "task_update";
+    }
+
+    @GetMapping("/dic")
+    public String toDictionaryPage(){
+        return "dictionary";
+    }
+
+    @GetMapping("/dic/to-dictionary-add")
+    public String toDictionaryAdd(){
+        return "dictionary_add";
     }
 }

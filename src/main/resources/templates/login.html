@@ -188,50 +188,56 @@
                 return false;
             }
             http({
-                "url": "/user/login",
-                "data": data,
-                "method":"post"
+                url: "/user/login",
+                method: "post",
+                data: JSON.stringify(data),
+                contentType: "application/json",
+                dataType: "json"
             },function (res) {
                 layer.msg("登录成功", {time:1000, icon:6},function(){
                     window.location.href = "/admin";
                 });
             },function (res) {
                 layer.msg(res.message, {time:1000, icon:5, shift:6});
-            });
+            },true,false);
             return false;
         });
     });
 
-    http({
-        url: "/pub-key",
-        method: "get",
-    }, function (res) {
-        sessionStorage.setItem("serverPublicKey",res.data);
-        var crypt = new JSEncrypt({default_key_size: 1024});
-        crypt.getKey();
-        var clientPrivateKey = crypt.getPrivateKeyB64();
-        var clientPublicKey = crypt.getPublicKeyB64();
-        sessionStorage.setItem("clientPrivateKey",clientPrivateKey);
-        sessionStorage.setItem("clientPublicKey",clientPublicKey);
-
-        var encrypt = new JSEncrypt({default_key_size: 1024});
-        encrypt.setPublicKey(res.data);
-        var encryptedPubKey = encrypt.encryptLong(clientPublicKey);
-
+    (function security(){
         http({
-            url: "/security-confirm",
-            method: "post",
-            data: {
-                "clientKey":encryptedPubKey
-            }
-        },function(res) {
-            var decrypt = new JSEncrypt({default_key_size: 1024});
-            var clientPrivateKey = sessionStorage.getItem("clientPrivateKey");
-            decrypt.setPrivateKey(clientPrivateKey);
-            var aesKey = decrypt.decrypt(res.data);
-            sessionStorage.setItem("transportAesKey",aesKey);
+            url: "/pub-key",
+            method: "get",
+        }, function (res) {
+            sessionStorage.setItem("serverPublicKey",res.data);
+            var crypt = new JSEncrypt({default_key_size: 1024});
+            crypt.getKey();
+            var clientPrivateKey = crypt.getPrivateKeyB64();
+            var clientPublicKey = crypt.getPublicKeyB64();
+            sessionStorage.setItem("clientPrivateKey",clientPrivateKey);
+            sessionStorage.setItem("clientPublicKey",clientPublicKey);
+
+            var encrypt = new JSEncrypt({default_key_size: 1024});
+            encrypt.setPublicKey(res.data);
+            var encryptedPubKey = encrypt.encryptLong(clientPublicKey);
+
+            http({
+                url: "/security-confirm",
+                method: "post",
+                data: {
+                    "clientKey":encryptedPubKey
+                }
+            },function(res) {
+                var decrypt = new JSEncrypt({default_key_size: 1024});
+                var clientPrivateKey = sessionStorage.getItem("clientPrivateKey");
+                decrypt.setPrivateKey(clientPrivateKey);
+                var aes = decrypt.decrypt(res.data);
+                aes = JSON.parse(aes);
+                sessionStorage.setItem("transportAesKey",aes.key);
+                sessionStorage.setItem("transportAesIv",aes.iv);
+            });
         });
-    });
+    })();
 
 </script>
 </body>

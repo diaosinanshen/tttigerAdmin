@@ -1,6 +1,6 @@
 var SERVER_URL = "http://localhost:8888";
 // 自动包含加密js
-document.write ('<script src="/cryptojs/rollups/aes.js"></script>');
+document.write ('<script src=" /js/cryptojs/rollups/aes.js"></script>');
 /**
  * 封装请求，同意验证后台处理，添加基础路径
  */
@@ -16,9 +16,7 @@ function http(param, successCallback, failureCallback,dataEncrypt,resultDecrypt)
         }
     }
     if(dataEncrypt){
-        var temp = Encrypt(param.data);
-        debugger
-        param.data = temp;
+        param.data = Encrypt(param.data);
     }
     param.success = function (res) {
         if(resultDecrypt){
@@ -70,7 +68,7 @@ function showError(message,after) {
  */
 function Decrypt(word) {
     var key  = CryptoJS.enc.Utf8.parse(aesKey());
-    var iv   = CryptoJS.enc.Utf8.parse('yNGY816Y3W155JFV');
+    var iv   = CryptoJS.enc.Utf8.parse(aesIv());
     var decrypted =CryptoJS.AES.decrypt(word,key,
         {
             iv:iv,
@@ -87,7 +85,7 @@ function Decrypt(word) {
  */
 function Encrypt(word) {
     var key  = CryptoJS.enc.Utf8.parse(aesKey());
-    var iv   = CryptoJS.enc.Utf8.parse('yNGY816Y3W155JFV');
+    var iv   = CryptoJS.enc.Utf8.parse(aesIv());
     var encrypted =CryptoJS.AES.encrypt(word,key,
         {
             iv:iv,
@@ -99,6 +97,10 @@ function Encrypt(word) {
 
 function aesKey(){
     return sessionStorage.getItem("transportAesKey");
+}
+
+function aesIv(){
+    return sessionStorage.getItem("transportAesIv");
 }
 
 /**

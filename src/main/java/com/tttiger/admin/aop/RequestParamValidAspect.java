@@ -55,7 +55,7 @@ public class RequestParamValidAspect {
 
             // 如果有校验不通过的
             if (!validResult.isEmpty()) {
-                return ResultMap.fail().message(validResult.iterator().next().getMessageTemplate());
+                return ResultMap.data().fail().message(validResult.iterator().next().getMessageTemplate());
             }
 
             return pjp.proceed();

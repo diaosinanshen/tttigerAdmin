@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.tttiger.admin.bean.sys.Manager;
 import com.tttiger.admin.bean.sys.ManagerRole;
+import com.tttiger.admin.bean.sys.Role;
 import com.tttiger.admin.common.ResultMap;
 import com.tttiger.admin.mapper.sys.ManagerMapper;
 import com.tttiger.admin.mapper.sys.ManagerRoleMapper;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author 秦浩桐
@@ -37,14 +39,14 @@ public class ManagerServiceImpl implements ManagerService {
     }
 
     @Override
-    public ResultMap selectAuthRole(String managerAccount){
+    public ResultMap<List<Role>> selectAuthRole(String managerAccount){
         Manager manager = managerMapper.selectManagerAndRoles(managerAccount);
-        return ResultMap.success().data(manager.getRoles());
+        return ResultMap.data(manager.getRoles()).success();
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ResultMap auth(Manager manager) {
+    public ResultMap<Object> auth(Manager manager) {
         Integer managerId = manager.getManagerId();
 
         QueryWrapper<ManagerRole> wrapper = new QueryWrapper<>();
@@ -63,6 +65,6 @@ public class ManagerServiceImpl implements ManagerService {
             });
         }
         roleBasedVoter.reloadAuthority();
-        return ResultMap.success().message("授权成功");
+        return ResultMap.data().success().message("授权成功");
     }
 }

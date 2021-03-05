@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>字典添加</title>
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta http-equiv="Access-Control-Allow-Origin" content="*">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="stylesheet" href="/lib/layui-v2.5.4/css/layui.css" media="all"/>
+    <!--[if lt IE 9]> -->
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+</head>
+<body>
+<div style="padding:20px 50px 0 50px">
+
+
+
+    <form class="layui-form" action="">
+        <div class="layui-form-item">
+            <label class="layui-form-label">模块名称</label>
+            <div class="layui-input-block">
+                <select id="modules" name="module" lay-verify="required" lay-filter="groups" lay-search="">
+                    <option value="">请选择模块名称</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">组名称</label>
+            <div class="layui-input-block">
+                <select id="groups" name="group" lay-verify="required" lay-search="">
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">字段键</label>
+            <div class="layui-input-block">
+                <input type="text" name="dicKey" id="managerPassword" autocomplete="off"
+                       class="layui-input" lay-verify="managerPassword">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">值类型</label>
+            <div class="layui-input-block">
+                <select name="valueType" lay-filter="types">
+                    <option value="String">字符</option>
+                    <option value="Boolean">布尔</option>
+                    <option value="Number">数值</option>
+                    <option value="Date">日期</option>
+                    <option value="DateTime">日期时间</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">字段值</label>
+            <div class="layui-input-block" id="dicValue">
+                <input type="text" name="dicValue" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">字段描述</label>
+            <div class="layui-input-block">
+                <input type="password" name="description" autocomplete="off"
+                       class="layui-input">
+            </div>
+        </div>
+        <div style="text-align:center;padding: 40px;">
+            <button class="layui-btn layui-btn-lg layui-btn-primary" onclick="closePage()">取消</button>
+            <button class="layui-btn layui-btn-lg layui-btn-normal" style="margin-left: 120px" lay-submit=""
+                    lay-filter="addDic">添加
+            </button>
+        </div>
+    </form>
+</div>
+</body>
+
+<script src="/js/base.js" charset="utf-8"></script>
+<script src="/lib/jquery-3.4.1/jquery-3.4.1.min.js" charset="utf-8"></script>
+<script src="/lib/layui-v2.5.4/layui.js" charset="utf-8"></script>
+
+<script>
+    var form;
+    var laydate;
+    var $;
+    layui.use(['form', 'laydate'], function () {
+        form = layui.form;
+        laydate = layui.laydate;
+        $ = layui.jquery;
+        //自定义验证规则
+        form.verify({
+            managerName: function (value) {
+                if (value.length < 2) {
+                    return '管理名称至少需要2个字符';
+                }
+            }
+            , managerAccount: [
+                /^[\S]{6,12}$/
+                , '账号必须6到12位，且不能出现空格'
+            ]
+            , managerPasswrod: [
+                /^[\S]{6,12}$/
+                , '密码必须6到12位，且不能出现空格'
+            ]
+        });
+        form.on('submit(addDic)', function (data) {
+            console.log(data);
+            http({
+                url: "/dic/add",
+                method: "post",
+                data: JSON.stringify(data.field),
+                contentType: "application/json",
+                dataType: "json"
+            }, function (res) {
+                showSuccess(res.message, function () {
+                    parent.getData();
+                    closePage();
+                });
+            }, function (res) {
+                showError(res.message)
+            }, true, true);
+            return false;
+        });
+        form.on('select(groups)', function (data) {
+            buildGroups(data.value);
+        });
+        form.on('select(types)', function (data) {
+            console.log(data.value);
+            if (data.value === "String") {
+                $("#dicValue").empty()
+                    .append("<input type='text' name='dicValue' autocomplete='off' class='layui-input'>");
+                form.render();
+            } else if (data.value === "Boolean") {
+                console.log("switch");
+                $("#dicValue").empty()
+                    .append("<input type='checkbox' name='dicValue' lay-skin='switch' lay-text='ON|OFF' checked>");
+                form.render();
+            } else if (data.value === "Number") {
+                $("#dicValue").empty()
+                    .append("<input type='text' name='dicValue' autocomplete='off' class='layui-input'>");
+                form.render();
+            } else if (data.value === "Date") {
+                $("#dicValue").empty()
+                    .append("<input type='text' id='dateInput' name='dicValue' autocomplete='off' class='layui-input'>");
+                laydate.render({
+                    elem: '#dateInput',
+                    type: 'date'
+                });
+            } else if (data.value === "DateTime") {
+                $("#dicValue").empty()
+                    .append("<input type='text' id='dateInput' name='dicValue' autocomplete='off' class='layui-input'>");
+                laydate.render({
+                    elem: '#dateInput',
+                    type: 'datetime'
+                });
+            }
+        });
+        buildModules();
+    });
+
+
+    /**
+     * 动态加载模块名称
+     */
+    function buildModules() {
+        http({
+            url: "/dic/all-module",
+            method: "get",
+            dataType: "json"
+        }, function (res) {
+            res.data.forEach((item) => {
+                console.log(item);
+                $("#modules").append("<option value='" + item.moduleName + "'>" + item.moduleDescription + "</option>");
+            });
+            form.render();
+        }, function (res) {
+            showError(res.message)
+        });
+    }
+
+    /**
+     * 动态加载模块中的组
+     * @param moduleName
+     */
+    function buildGroups(moduleName) {
+        http({
+            url: "/dic/all-group",
+            method: "get",
+            data: {
+                "moduleName": moduleName
+            },
+            dataType: "json"
+        }, function (res) {
+            console.log(res.data);
+            res.data.forEach((item) => {
+                console.log(item);
+                $("#groups").append("<option value='" + item.groupName + "'>" + item.groupDescription + "</option>");
+            });
+            if (res.data == null || res.data == 0) {
+                $("#groups").empty();
+            }
+            form.render();
+        }, function (res) {
+            showError(res.message);
+            if (res.data == null || res.data == 0) {
+                $("#groups").empty();
+            }
+            form.render();
+        });
+    }
+</script>
+</html>

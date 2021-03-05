@@ -23,7 +23,7 @@ public class UserAuthenticationFailureHandler implements AuthenticationFailureHa
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         response.setCharacterEncoding("utf-8");
         response.setContentType("application/json");
-        ResultMap message = ResultMap.fail().message("账号或密码不正确");
+        ResultMap message = ResultMap.data().fail().message("账号或密码不正确");
         response.getWriter().write(JSONObject.toJSONString(message));
 
         String ipAddress = SecurityUtil.getIPAddress(request);

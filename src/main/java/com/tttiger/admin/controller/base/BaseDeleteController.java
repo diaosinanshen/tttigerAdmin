@@ -23,7 +23,7 @@ public interface BaseDeleteController<T> extends BaseController<T> {
     @PostMapping("/delete")
     @CommonValid
     @ResponseBody
-    default ResultMap delete(@NotNull(message = "id不能为空") Integer id) {
+    default ResultMap<Object> delete(@NotNull(message = "id不能为空") Integer id) {
         return getService().delete(id);
     }
 }

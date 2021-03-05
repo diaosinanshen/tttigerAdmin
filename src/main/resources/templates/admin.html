@@ -22,6 +22,7 @@
         .layui-menu-tips .fa{
             font-size:14px !important;
             text-align: center !important;
+            padding-right: 2px;
             width:14px;
             height: 14px;
         }
@@ -63,7 +64,7 @@
                         <a href="javascript:;" data-iframe-tab="page/user-setting.html" data-title="基本资料" data-icon="fa fa-gears">基本资料</a>
                     </dd>
                     <dd>
-                        <a href="javascript:;" data-iframe-tab="page/user-password.html" data-title="修改密码" data-icon="fa fa-gears">修改密码</a>
+                        <a href="javascript:;"  data-iframe-tab="/manager/to-change-pwd" data-title="修改密码" data-icon="fa fa-gears">修改密码</a>
                     </dd>
                     <dd>
                         <a href="/logout" class="login-out">退出登录</a>
@@ -115,7 +116,6 @@
             layer = layui.layer;
 
         layuimini.init('/api/init.json');
-
         $('.login-out').on("click", function () {
             layer.msg('退出登录成功', function () {
                 window.location = '/page/login-1.html';
@@ -128,8 +128,6 @@
     }, function (res) {
         $("#currentManager").text(res.data);
     });
-    console.log(Encrypt('哈哈哈'))
-    console.log(Decrypt('LpgXAbkT3V9tV0dwZK/9vw=='));
 </script>
 </body>
 </html>

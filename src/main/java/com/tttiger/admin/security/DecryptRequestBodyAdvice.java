@@ -33,6 +33,7 @@ public class DecryptRequestBodyAdvice implements RequestBodyAdvice {
         try {
             HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
             String aesKey = request.getSession().getAttribute("transportAesKey").toString();
+            String aesIv = request.getSession().getAttribute("transportAesIv").toString();
             boolean encode = false;
             if (methodParameter.getMethod().isAnnotationPresent(SecurityParameter.class)) {
                 //获取注解配置的包含和去除字段
@@ -41,7 +42,7 @@ public class DecryptRequestBodyAdvice implements RequestBodyAdvice {
                 encode = serializedField.decrypt();
             }
             if (encode) {
-                return new EncryptHttpInputMessage(inputMessage, aesKey);
+                return new EncryptHttpInputMessage(inputMessage);
             } else {
                 return inputMessage;
             }

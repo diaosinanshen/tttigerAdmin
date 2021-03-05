@@ -1,10 +1,9 @@
 package com.tttiger.admin.config;
 
 import com.tttiger.admin.security.DatabaseUserDetailServiceImpl;
+import com.tttiger.admin.security.JsonUsernamePasswordAuthenticationFilter;
 import com.tttiger.admin.security.RoleBasedVoter;
 import com.tttiger.admin.security.VerifyCodeFilter;
-import com.tttiger.admin.security.handler.UserAccessDeniedHandler;
-import com.tttiger.admin.security.handler.UserLogoutHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.access.AccessDecisionManager;
@@ -19,9 +18,12 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.access.expression.WebExpressionVoter;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutHandler;
 
 import java.util.Arrays;
 import java.util.List;
@@ -46,6 +48,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private AuthenticationSuccessHandler successHandler;
+
+    @Autowired
+    private LogoutHandler logoutHandler;
+
+    @Autowired
+    private AccessDeniedHandler accessDeniedHandler;
 
     @Autowired
     private VerifyCodeFilter VerifyCodeFilter;
@@ -92,15 +100,27 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 "/layui/**", "/lib/**", "/images/**","/favicon.ico").permitAll()
                 .and()
 
-                .logout().permitAll().logoutUrl("/logout").addLogoutHandler(new UserLogoutHandler())
+                .logout().permitAll().logoutUrl("/logout").addLogoutHandler(logoutHandler)
                 .and()
                 .headers().frameOptions().disable()
                 .and()
                 .csrf().disable()
                 .authorizeRequests().anyRequest().authenticated()
                 .accessDecisionManager(accessDecisionManager())
-                .and().exceptionHandling().accessDeniedHandler(new UserAccessDeniedHandler());
+                .and().exceptionHandling().accessDeniedHandler(accessDeniedHandler)
+                .and().addFilterAt(CustomAuthenticationFilter(),UsernamePasswordAuthenticationFilter.class);
 //                .and().addFilterBefore(VerifyCodeFilter, UsernamePasswordAuthenticationFilter.class);
+    }
+
+    @Bean
+    public JsonUsernamePasswordAuthenticationFilter CustomAuthenticationFilter() throws Exception {
+        JsonUsernamePasswordAuthenticationFilter filter = new JsonUsernamePasswordAuthenticationFilter();
+        // 自定义认证过滤器需要重新指定登录成功处理器
+        filter.setFilterProcessesUrl("/user/login");
+        filter.setAuthenticationSuccessHandler(successHandler);
+        filter.setAuthenticationFailureHandler(failureHandler);
+        filter.setAuthenticationManager(authenticationManagerBean());
+        return filter;
     }
 
     @Autowired

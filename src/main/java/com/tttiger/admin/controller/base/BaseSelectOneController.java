@@ -23,7 +23,7 @@ public interface BaseSelectOneController<T> extends BaseController<T> {
     @GetMapping("/select/one")
     @ResponseBody
     @CommonValid
-    default ResultMap selectOne(@NotNull(message = "id不能为空") Integer id) {
+    default ResultMap<T> selectOne(@NotNull(message = "id不能为空") Integer id) {
         return getService().selectById(id);
     }
 }

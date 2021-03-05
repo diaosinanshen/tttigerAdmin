@@ -3,12 +3,9 @@ package com.tttiger.admin.controller.sys;
 import com.tttiger.admin.bean.sys.Menu;
 import com.tttiger.admin.common.ResultMap;
 import com.tttiger.admin.common.annotation.validate.CommonValid;
-import com.tttiger.admin.utils.AesUtil;
-import com.tttiger.admin.utils.RSAUtil;
-import com.tttiger.admin.utils.VerifyCodeUtils;
-import com.tttiger.admin.service.sys.ManagerService;
 import com.tttiger.admin.service.sys.MenuService;
 import com.tttiger.admin.utils.SecurityUtil;
+import com.tttiger.admin.utils.VerifyCodeUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -23,7 +20,6 @@ import javax.servlet.http.HttpSession;
 import javax.validation.constraints.NotBlank;
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author 秦浩桐
@@ -35,8 +31,6 @@ import java.util.Map;
 @AllArgsConstructor
 @Slf4j
 public class LoginController {
-
-    private ManagerService managerService;
 
     private MenuService menuService;
 
@@ -53,44 +47,32 @@ public class LoginController {
 
     @GetMapping("/pub-key")
     @ResponseBody
-    public ResultMap getPubKey(HttpSession session) throws Exception {
-        Map<String, String> keyMap = RSAUtil.generateKey();
-        String publicKeyString = keyMap.get("publicKeyString");
-        String privateKeyString = keyMap.get("privateKeyString");
-        session.setAttribute("serverPublicKey",publicKeyString);
-        session.setAttribute("serverPrivateKey",privateKeyString);
-        return ResultMap.success().data(publicKeyString);
+    public ResultMap<String> getPubKey() throws Exception {
+        return ResultMap.data(SecurityUtil.setServerRsa()).success();
     }
 
     @CommonValid
     @PostMapping("/security-confirm")
     @ResponseBody
-    public ResultMap setClientKey(@NotBlank(message = "非法参数") String clientKey, HttpSession session) throws Exception {
-        String serverPrivateKey = session.getAttribute("serverPrivateKey").toString();
-        System.out.println(clientKey.getBytes().length);
-        String clientPublicKey = RSAUtil.decryptByPriKey(clientKey, serverPrivateKey);
-        session.setAttribute("clientPublicKey",clientPublicKey);
-        String aesKey = AesUtil.generateKey();
-        session.setAttribute("transportAesKey",aesKey);
-        String encryptedAes = RSAUtil.encryptByPubKey(aesKey, clientPublicKey);
-        return ResultMap.success().data(encryptedAes);
+    public ResultMap<String> setClientKey(@NotBlank(message = "非法参数") String clientKey) throws Exception {
+        return ResultMap.data(SecurityUtil.setTransportAes(clientKey)).success();
     }
 
     @GetMapping("/current-manager")
     @ResponseBody
-    public ResultMap selectCurrentManager(){
+    public ResultMap<String> selectCurrentManager(){
         Authentication currentUser = SecurityUtil.getCurrentUser();
-        return ResultMap.success().data(currentUser.getName());
+        return ResultMap.data(currentUser.getName()).success();
     }
 
 
     @GetMapping("/select-authority-menu")
     @ResponseBody
-    public ResultMap selectAuthorityMenu(){
+    public ResultMap<List<Menu>> selectAuthorityMenu(){
         Authentication currentUser = SecurityUtil.getCurrentUser();
         String userAccount = currentUser.getName();
         List<Menu> menus = menuService.selectUserHasAuthorityMenu(userAccount);
-        return ResultMap.success().data(menus);
+        return ResultMap.data(menus).success();
     }
 
 

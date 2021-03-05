@@ -18,17 +18,17 @@ public class ExceptionControllerAdvice {
      * 处理参数校验失败异常
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResultMap methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException e) {
+    public ResultMap<Object> methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException e) {
         // 从异常对象中拿到ObjectError对象
         ObjectError objectError = e.getBindingResult().getAllErrors().get(0);
         // 然后提取错误提示信息进行返回
-        return ResultMap.fail().message(objectError.getDefaultMessage());
+        return ResultMap.data().fail().message(objectError.getDefaultMessage());
     }
 
     @ExceptionHandler(Exception.class)
-    public ResultMap defaultExceptionHandler(Exception e){
+    public ResultMap<Object> defaultExceptionHandler(Exception e){
         log.error("产生未处理异常：{}",e.getStackTrace());
         e.printStackTrace();
-        return ResultMap.fail();
+        return ResultMap.data().fail();
     }
 }

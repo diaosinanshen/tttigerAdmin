@@ -35,13 +35,13 @@ public class RoleController implements BaseCrudController<Role> {
 
 
     @GetMapping("/select-menu")
-    public ResultMap selectMenu() {
-        return ResultMap.success().data(menuService.selectAll());
+    public ResultMap<List<Menu>> selectMenu() {
+        return ResultMap.data(menuService.selectAll()).success();
     }
 
     @GetMapping("/select-all")
     @ResponseBody
-    public ResultMap selectAll(){
+    public ResultMap<List<Role>> selectAll(){
         return roleService.selectList(null);
     }
 
@@ -52,25 +52,25 @@ public class RoleController implements BaseCrudController<Role> {
      */
     @GetMapping("/select-role-menu")
     @ResponseBody
-    public ResultMap selectRoleMenu(@NotNull(message = "参数不正确") Integer id){
+    public ResultMap<List<Menu>> selectRoleMenu(@NotNull(message = "参数不正确") Integer id){
         List<Menu> menus = menuService.selectMenuByRoleId(id);
-        return ResultMap.success().data(menus);
+        return ResultMap.data(menus).success();
     }
 
     @Override
-    public ResultMap add(@RequestBody @Validated(Add.class) Role role) {
+    public ResultMap<Object> add(@RequestBody @Validated(Add.class) Role role) {
         if (roleService.addRoleAndMenu(role)) {
-            return ResultMap.success().message("添加成功");
+            return ResultMap.data().success().message("添加成功");
         }
-        return ResultMap.fail();
+        return ResultMap.data().fail();
     }
 
     @Override
-    public ResultMap update(@RequestBody @Validated(Update.class) Role role) {
+    public ResultMap<Object> update(@RequestBody @Validated(Update.class) Role role) {
         if(roleService.updateRoleMenu(role)){
-            return ResultMap.success().message("更新成功");
+            return ResultMap.data().success().message("更新成功");
         }
-        return ResultMap.fail().message("更新失败");
+        return ResultMap.data().fail().message("更新失败");
     }
 
     @Override

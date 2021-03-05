@@ -22,7 +22,7 @@ public interface BaseAddController<T> extends BaseController<T> {
      */
     @PostMapping("/add")
     @ResponseBody
-    default ResultMap add(@Validated(Add.class) T t) {
+    default ResultMap<Object> add(@Validated(Add.class) T t) {
         return getService().insert(t);
     }
 

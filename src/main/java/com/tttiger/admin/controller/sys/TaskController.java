@@ -32,20 +32,20 @@ public class TaskController implements BaseSelectPageController<Task> {
 
     @CommonValid
     @PostMapping("/pause")
-    public ResultMap pauseTask(@NotNull(message = "定时任务ID缺失") Integer taskId) throws SchedulerException {
+    public ResultMap<Object> pauseTask(@NotNull(message = "定时任务ID缺失") Integer taskId) throws SchedulerException {
         return taskService.pauseTask(taskId);
     }
 
     @CommonValid
     @PostMapping("/resume")
-    public ResultMap resumeTask(@NotNull(message = "定时任务ID缺失") Integer taskId) throws SchedulerException {
+    public ResultMap<Object> resumeTask(@NotNull(message = "定时任务ID缺失") Integer taskId) throws SchedulerException {
         return taskService.resumeTask(taskId);
     }
 
     @PostMapping("/update")
-    public ResultMap updateTask(@Validated(Update.class) @RequestBody Task task) throws SchedulerException {
+    public ResultMap<Object> updateTask(@Validated(Update.class) @RequestBody Task task) throws SchedulerException {
         if (!CronExpression.isValidExpression(task.getCronExpression())) {
-            return ResultMap.fail().message("cron表达式错误");
+            return ResultMap.data().fail().message("cron表达式错误");
         }
         task.setUpdateTime(new Date());
         return taskService.updateTask(task);

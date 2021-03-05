@@ -65,19 +65,19 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public ResultMap delete(Serializable id) {
+    public ResultMap<Object> delete(Serializable id) {
         QueryWrapper<ManagerRole> mrWrapper = new QueryWrapper<>();
         mrWrapper.lambda().eq(ManagerRole::getRoleId,id);
         if(!managerRoleMapper.selectList(mrWrapper).isEmpty()){
-            return ResultMap.fail().message("角色正在使用中");
+            return ResultMap.data().fail().message("角色正在使用中");
         }
         if (getMapper().deleteById(id) == 1) {
             QueryWrapper<RoleMenu> wrapper = new QueryWrapper<>();
             wrapper.lambda().eq(RoleMenu::getRoleId,id);
             roleMenuMapper.delete(wrapper);
-            return ResultMap.success().message("删除成功");
+            return ResultMap.data().success().message("删除成功");
         }
-        return ResultMap.fail().message("删除失败");
+        return ResultMap.data().fail().message("删除失败");
     }
 
     @Override

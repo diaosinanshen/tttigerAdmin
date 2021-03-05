@@ -15,7 +15,7 @@ public interface TaskService extends BaseService<Task>{
      * @exception SchedulerException 暂停计划任务失败
      * @return 响应实体
      */
-    ResultMap pauseTask(Integer taskId) throws SchedulerException;
+    ResultMap<Object> pauseTask(Integer taskId) throws SchedulerException;
 
     /**
      * 初始化定时任务
@@ -27,7 +27,7 @@ public interface TaskService extends BaseService<Task>{
      * @param task 包含id与更新内容的实体
      * @return 响应实体
      */
-    ResultMap updateTask(Task task) throws SchedulerException;
+    ResultMap<Object> updateTask(Task task) throws SchedulerException;
 
 
     /**
@@ -35,5 +35,5 @@ public interface TaskService extends BaseService<Task>{
      * @param taskId 任务主键id
      * @return 响应实体
      */
-    ResultMap resumeTask(Integer taskId) throws SchedulerException;
+    ResultMap<Object> resumeTask(Integer taskId) throws SchedulerException;
 }

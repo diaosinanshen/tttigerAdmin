@@ -1,11 +1,13 @@
 package com.tttiger.admin.controller.sys;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.tttiger.admin.bean.sys.Dictionary;
 import com.tttiger.admin.common.ResultMap;
 import com.tttiger.admin.service.sys.DictionaryService;
+import com.tttiger.admin.utils.StringUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,8 +38,19 @@ public class DictionaryController{
     @GetMapping("/select")
     public ResultMap<IPage<Dictionary>> select(@RequestParam(required = false, defaultValue = "1", value = "page") Integer page,
                                                @RequestParam(required = false, defaultValue = "10", value = "limit") Integer limit,
-                                               Dictionary condition) {
-        return dictionaryService.selectPage(new Page<>(page, limit), null);
+                                               String moduleName,String groupName, String dicKey) {
+        QueryWrapper<Dictionary> queryWrapper = new QueryWrapper<>();
+        LambdaQueryWrapper<Dictionary> lambda = queryWrapper.lambda();
+        if(StringUtil.isNotEmpty(moduleName)){
+            lambda.eq(Dictionary::getModuleName,moduleName);
+        }
+        if(StringUtil.isNotEmpty(groupName)){
+            lambda.eq(Dictionary::getGroupName,groupName);
+        }
+        if(StringUtil.isNotEmpty(dicKey)){
+            lambda.eq(Dictionary::getDicKey,dicKey);
+        }
+        return dictionaryService.selectPage(new Page<>(page, limit), queryWrapper);
     }
 
 

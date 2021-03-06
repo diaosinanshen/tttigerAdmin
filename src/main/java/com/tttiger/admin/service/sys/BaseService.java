@@ -46,7 +46,7 @@ public interface BaseService<T> {
     default ResultMap<List<T>> selectList(Wrapper<T> wrapper) {
         List<T> ts = getMapper().selectList(wrapper);
         if (ts.isEmpty()) {
-            return ResultMap.data(ts).fail().message("未找到匹配数据");
+            return ResultMap.data(ts).success().message("未找到匹配数据");
         }
         return ResultMap.data(ts).success();
     }
@@ -60,9 +60,9 @@ public interface BaseService<T> {
     default ResultMap<T> selectOne(Wrapper<T> wrapper) {
         T t = getMapper().selectOne(wrapper);
         if (t == null) {
-            return ResultMap.data(t).fail().message("未找到匹配数据");
+            return ResultMap.data(t).success().message("未找到匹配数据");
         }
-        return ResultMap.data(t).fail().message("查询成功");
+        return ResultMap.data(t).success().message("查询成功");
     }
 
 
@@ -75,9 +75,9 @@ public interface BaseService<T> {
     default ResultMap<T> selectById(Serializable id) {
         T t = getMapper().selectById(id);
         if (t == null) {
-            return ResultMap.data(t).fail().message("未找到匹配数据");
+            return ResultMap.data(t).success().message("未找到匹配数据");
         }
-        return ResultMap.data(t).fail().message("查询成功");
+        return ResultMap.data(t).success().message("查询成功");
     }
 
     /**
@@ -90,7 +90,7 @@ public interface BaseService<T> {
     default ResultMap<IPage<T>> selectPage(IPage<T> page, Wrapper<T> wrapper) {
         IPage<T> tiPage = getMapper().selectPage(page, wrapper);
         if (tiPage.getRecords().isEmpty()) {
-            return ResultMap.data(tiPage).fail().message("未找到匹配数据");
+            return ResultMap.data(tiPage).success().message("未找到匹配数据");
         }
         return ResultMap.data(tiPage).success().message("查询成功");
     }

@@ -24,7 +24,7 @@
         <div class="layui-form-item">
             <label class="layui-form-label">模块名称</label>
             <div class="layui-input-block">
-                <select id="modules" name="module" lay-verify="required" lay-filter="groups" lay-search="">
+                <select id="modules" name="module" lay-verify="required" lay-filter="modules" lay-search="">
                     <option value="">请选择模块名称</option>
                 </select>
             </div>
@@ -124,7 +124,7 @@
             }, true, true);
             return false;
         });
-        form.on('select(groups)', function (data) {
+        form.on('select(modules)', function (data) {
             buildGroups(data.value);
         });
         form.on('select(types)', function (data) {
@@ -196,7 +196,6 @@
         }, function (res) {
             console.log(res.data);
             res.data.forEach((item) => {
-                console.log(item);
                 $("#groups").append("<option value='" + item.groupName + "'>" + item.groupDescription + "</option>");
             });
             if (res.data == null || res.data == 0) {

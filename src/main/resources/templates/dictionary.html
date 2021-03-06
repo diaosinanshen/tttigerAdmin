@@ -27,7 +27,7 @@
                         <div class="layui-inline">
                             <label class="layui-form-label">模块名称</label>
                             <div class="layui-input-inline">
-                                <select id="modules" name="moduleName" lay-verify="required" lay-filter="groups" lay-search="">
+                                <select id="modules" name="moduleName" lay-verify="required" lay-filter="modules" lay-search="">
                                     <option value="1">请选择模块名称</option>
                                 </select>
                             </div>
@@ -68,7 +68,7 @@
 <script src="/lib/jquery-3.4.1/jquery-3.4.1.min.js" charset="utf-8"></script>
 <script src="/lib/layui-v2.5.4/layui.js" charset="utf-8"></script>
 <script type="text/html" id="barDemo">
-    <a class="layui-btn layui-btn-sm layui-btn-primary" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-sm" lay-event="edit">编辑</a>
     <a class="layui-btn layui-btn-danger layui-btn-sm" lay-event="del">删除</a>
 </script>
 <script>
@@ -83,9 +83,6 @@
             elem: '#dic'
             , url: SERVER_URL + '/dic/select'
             , page: true
-            , where : {
-                moduleName:""
-            }
             , response: {
                 statusName: "status",
                 statusCode: 1,
@@ -112,19 +109,24 @@
 
         // 监听搜索操作
         form.on('submit(data-search-btn)', function (data) {
-            var result = JSON.stringify(data.field);
+            var result = data.field;
             //执行搜索重载
-            console.log(result);
             table.reload('dic', {
                 page: {
                     curr: 1
                 }
-                , where: {
-                    moduleName:result.moduleName
+                , where:{
+                    'moduleName':result.moduleName,
+                    'groupName':result.groupName,
+                    'dicKey':result.dicKey
                 }
             },'data');
             return false;
         });
+        form.on('select(modules)', function (data) {
+            buildGroups(data.value);
+        });
+        buildModules();
     });
 
 
@@ -132,6 +134,54 @@
         openPage("添加字典", "/dic/to-dictionary-add", '60%', '90%');
     }
 
+
+    /**
+     * 动态加载模块名称
+     */
+    function buildModules() {
+        http({
+            url: "/dic/all-module",
+            method: "get",
+            dataType: "json"
+        }, function (res) {
+            res.data.forEach((item) => {
+                $("#modules").append("<option value='" + item.moduleName + "'>" + item.moduleDescription + "</option>");
+            });
+            form.render();
+        }, function (res) {
+            showError(res.message)
+        });
+    }
+
+    /**
+     * 动态加载模块中的组
+     * @param moduleName
+     */
+    function buildGroups(moduleName) {
+        http({
+            url: "/dic/all-group",
+            method: "get",
+            data: {
+                "moduleName": moduleName
+            },
+            dataType: "json"
+        }, function (res) {
+            console.log(res.data);
+            res.data.forEach((item) => {
+                $("#groups").append("<option value='" + item.groupName + "'>" + item.groupDescription + "</option>");
+            });
+            if (res.data == null || res.data == 0) {
+                $("#groups").empty();
+            }
+            form.render();
+        }, function (res) {
+            showError(res.message);
+            if (res.data == null || res.data == 0) {
+                $("#groups").empty();
+            }
+            form.render();
+        });
+    }
 
 </script>
 </html>

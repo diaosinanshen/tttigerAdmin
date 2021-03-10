@@ -35,6 +35,7 @@ public class RoleController implements BaseCrudController<Role> {
 
 
     @GetMapping("/select-menu")
+    @ResponseBody
     public ResultMap<List<Menu>> selectMenu() {
         return ResultMap.data(menuService.selectAll()).success();
     }

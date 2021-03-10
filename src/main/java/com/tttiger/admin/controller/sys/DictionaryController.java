@@ -6,14 +6,17 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.tttiger.admin.bean.sys.Dictionary;
 import com.tttiger.admin.common.ResultMap;
+import com.tttiger.admin.common.annotation.security.SecurityParameter;
+import com.tttiger.admin.common.annotation.validate.Update;
+import com.tttiger.admin.controller.base.BaseDeleteController;
+import com.tttiger.admin.service.sys.BaseService;
 import com.tttiger.admin.service.sys.DictionaryService;
 import com.tttiger.admin.utils.StringUtil;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -24,9 +27,27 @@ import java.util.List;
 @RestController
 @RequestMapping("/dic")
 @AllArgsConstructor
-public class DictionaryController{
+public class DictionaryController implements BaseDeleteController<Dictionary> {
 
     private DictionaryService dictionaryService;
+
+    @SecurityParameter
+    @PostMapping("/add")
+    public ResultMap<Object> add(@RequestBody Dictionary dictionary) {
+        Date cur = new Date();
+        dictionary.setUpdateTime(cur);
+        dictionary.setCreateTime(cur);
+        return dictionaryService.insert(dictionary);
+    }
+
+    @SecurityParameter
+    @PostMapping("/update")
+    public ResultMap<Object> update(@Validated({Update.class}) @RequestBody Dictionary dictionary) {
+        Date cur = new Date();
+        dictionary.setUpdateTime(cur);
+        return dictionaryService.updateById(dictionary);
+    }
+
 
     /**
      * 通用实体分页查询
@@ -36,20 +57,15 @@ public class DictionaryController{
      * @return 统一结果封装
      */
     @GetMapping("/select")
+    @SecurityParameter(decrypt = false)
     public ResultMap<IPage<Dictionary>> select(@RequestParam(required = false, defaultValue = "1", value = "page") Integer page,
                                                @RequestParam(required = false, defaultValue = "10", value = "limit") Integer limit,
                                                String moduleName,String groupName, String dicKey) {
         QueryWrapper<Dictionary> queryWrapper = new QueryWrapper<>();
         LambdaQueryWrapper<Dictionary> lambda = queryWrapper.lambda();
-        if(StringUtil.isNotEmpty(moduleName)){
-            lambda.eq(Dictionary::getModuleName,moduleName);
-        }
-        if(StringUtil.isNotEmpty(groupName)){
-            lambda.eq(Dictionary::getGroupName,groupName);
-        }
-        if(StringUtil.isNotEmpty(dicKey)){
-            lambda.eq(Dictionary::getDicKey,dicKey);
-        }
+        lambda.eq(StringUtil.isNotEmpty(moduleName),Dictionary::getModuleName,moduleName);
+        lambda.eq(StringUtil.isNotEmpty(groupName),Dictionary::getGroupName,groupName);
+        lambda.eq(StringUtil.isNotEmpty(dicKey),Dictionary::getDicKey,dicKey);
         return dictionaryService.selectPage(new Page<>(page, limit), queryWrapper);
     }
 
@@ -57,7 +73,7 @@ public class DictionaryController{
     @GetMapping("/all-module")
     public ResultMap<List<Dictionary>> selectAllModule() {
         QueryWrapper<Dictionary> queryWrapper = new QueryWrapper<>();
-        queryWrapper.select("DISTINCT module_name,module_description");
+        queryWrapper.select("DISTINCT module_name");
         return dictionaryService.selectList(queryWrapper);
     }
 
@@ -65,8 +81,12 @@ public class DictionaryController{
     public ResultMap<List<Dictionary>> selectAllGroup(String moduleName) {
         QueryWrapper<Dictionary> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(Dictionary::getModuleName,moduleName);
-        queryWrapper.select("DISTINCT group_name,group_description");
+        queryWrapper.select("DISTINCT group_name");
         return dictionaryService.selectList(queryWrapper);
     }
 
+    @Override
+    public BaseService<Dictionary> getService() {
+        return dictionaryService;
+    }
 }

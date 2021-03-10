@@ -12,6 +12,13 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface SecurityParameter {
+    /**
+     * 接收参数是否解密
+     */
     boolean decrypt() default true;
+
+    /**
+     * 返回参数是否加密
+     */
     boolean encrypt() default true;
 }

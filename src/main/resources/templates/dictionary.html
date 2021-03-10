@@ -27,16 +27,16 @@
                         <div class="layui-inline">
                             <label class="layui-form-label">模块名称</label>
                             <div class="layui-input-inline">
-                                <select id="modules" name="moduleName" lay-verify="required" lay-filter="modules" lay-search="">
-                                    <option value="1">请选择模块名称</option>
+                                <select id="modules" name="moduleName" lay-filter="modules" lay-search="">
+                                    <option value="">请选择模块名称</option>
                                 </select>
                             </div>
                         </div>
                         <div class="layui-inline">
                             <label class="layui-form-label">组名称</label>
                             <div class="layui-input-inline">
-                                <select id="groups" name="groupName" lay-verify="required" lay-filter="groups" lay-search="">
-                                    <option value="2">请选择模块名称</option>
+                                <select id="groups" name="groupName" lay-filter="groups" lay-search="">
+                                    <option value="">请选择模块名称</option>
                                 </select>
                             </div>
                         </div>
@@ -74,6 +74,7 @@
 <script>
     var table;
     var form;
+    var curDic;
 
     layui.use(['table','form'], function () {
         table = layui.table;
@@ -89,6 +90,7 @@
                 dataName: "data"
             }
             , parseData: function (res) {
+                res = JSON.parse(Decrypt(res));
                 return {
                     status: res.status,
                     data: res.data.records,
@@ -98,8 +100,8 @@
             }
             , cols: [ [
                 {title: '序号', type: "numbers", align: 'center'}
-                , {field: 'moduleDescription', title: '模块名称', align: 'center'}
-                , {field: 'groupDescription', title: '组名称', align: 'center'}
+                , {field: 'moduleName', title: '模块名称', align: 'center'}
+                , {field: 'groupName', title: '组名称', align: 'center'}
                 , {field: 'dicKey', title: '字段键', align: 'center'}
                 , {field: 'dicValue', title: '字段值', align: 'center'}
                 , {field: 'description', title: '字段描述', align: 'center'}
@@ -127,6 +129,35 @@
             buildGroups(data.value);
         });
         buildModules();
+
+        // 新增修改
+        table.on('tool(dic)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'del') {
+                layer.confirm('确定要删除字典吗', function (index) {
+                    var dicId = obj.data.dicId;
+                    http({
+                        url: "/dic/delete",
+                        method: "post",
+                        data: {
+                            "id": dicId
+                        }
+                    }, function (res) {
+                        showSuccess(res.message);
+                        layer.close(index);
+                        table.reload('dic');
+                    }, function (res) {
+                        showError(res.message);
+                        layer.close(index);
+                    });
+
+                });
+            }else  if(obj.event == 'edit'){
+                curDic = obj.data;
+                console.log(curDic);
+                openPage("修改字典", "/dic/to-dictionary-update", '60%', '90%');
+            }
+        });
     });
 
 
@@ -145,7 +176,7 @@
             dataType: "json"
         }, function (res) {
             res.data.forEach((item) => {
-                $("#modules").append("<option value='" + item.moduleName + "'>" + item.moduleDescription + "</option>");
+                $("#modules").append("<option value='" + item.moduleName + "'>" + item.moduleName + "</option>");
             });
             form.render();
         }, function (res) {
@@ -168,7 +199,7 @@
         }, function (res) {
             console.log(res.data);
             res.data.forEach((item) => {
-                $("#groups").append("<option value='" + item.groupName + "'>" + item.groupDescription + "</option>");
+                $("#groups").append("<option value='" + item.groupName + "'>" + item.groupName + "</option>");
             });
             if (res.data == null || res.data == 0) {
                 $("#groups").empty();
@@ -183,5 +214,9 @@
         });
     }
 
+
+    function  reload() {
+        table.reload('dic');
+    }
 </script>
 </html>

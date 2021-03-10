@@ -94,4 +94,9 @@ public class JumpController {
     public String toDictionaryAdd(){
         return "dictionary_add";
     }
+
+    @GetMapping("/dic/to-dictionary-update")
+    public String toDictionaryUpdate(){
+        return "dictionary_update";
+    }
 }

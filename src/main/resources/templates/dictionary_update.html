@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>字典添加</title>
+    <title>字典修改</title>
 
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta http-equiv="Access-Control-Allow-Origin" content="*">
@@ -57,21 +57,21 @@
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label">字段值</label>
-            <div class="layui-input-block" id="dicValue">
-                <input type="text"  lay-verify="dicValue" name="dicValue" autocomplete="off" class="layui-input">
+            <div class="layui-input-block">
+                <input type="text" id="dicValue" name="dicValue" autocomplete="off" class="layui-input" lay-verify="dicValue">
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label">字段描述</label>
             <div class="layui-input-block">
-                <input type="text" name="description" autocomplete="off"
+                <input type="text" id="description" name="description" autocomplete="off"
                        class="layui-input">
             </div>
         </div>
         <div style="text-align:center;padding: 40px;">
             <button class="layui-btn layui-btn-lg layui-btn-primary" onclick="closePage()">取消</button>
             <button class="layui-btn layui-btn-lg layui-btn-normal" style="margin-left: 120px" lay-submit=""
-                    lay-filter="addDic">添加
+                    lay-filter="updateDic">修改
             </button>
         </div>
     </form>
@@ -101,10 +101,10 @@
                 , '字典value必须6到12位，且不能出现空格'
             ]
         });
-        form.on('submit(addDic)', function (data) {
-            console.log(data);
+        form.on('submit(updateDic)', function (data) {
+            data.field.dicId = parent.curDic.dicId;
             http({
-                url: "/dic/add",
+                url: "/dic/update",
                 method: "post",
                 data: JSON.stringify(data.field),
                 contentType: "application/json",
@@ -127,7 +127,7 @@
             console.log(data.value);
             if (data.value === "0") {
                 $("#dicValue").empty()
-                    .append("<input type='text' name='dicValue' lay-verify='dicValue' autocomplete='off' class='layui-input'>");
+                    .append("<input type='text' name='dicValue' autocomplete='off' class='layui-input'>");
                 form.render();
             } else if (data.value === "1") {
                 console.log("switch");
@@ -136,11 +136,11 @@
                 form.render();
             } else if (data.value === "2") {
                 $("#dicValue").empty()
-                    .append("<input type='text' name='dicValue' lay-verify='dicValue' autocomplete='off' class='layui-input'>");
+                    .append("<input type='text' name='dicValue' autocomplete='off' class='layui-input'>");
                 form.render();
             } else if (data.value === "3") {
                 $("#dicValue").empty()
-                    .append("<input type='text' id='dateInput' lay-verify='dicValue' name='dicValue' autocomplete='off' class='layui-input'>");
+                    .append("<input type='text' id='dateInput' name='dicValue' autocomplete='off' class='layui-input'>");
                 laydate.render({
                     elem: '#dateInput',
                     type: 'date'
@@ -155,6 +155,10 @@
             }
         });
         buildModules();
+        initGroup();
+        $('#dicKey').val(parent.curDic.dicKey);
+        $('#dicValue').val(parent.curDic.dicValue);
+        $('#description').val(parent.curDic.description);
     });
 
 
@@ -168,8 +172,36 @@
             dataType: "json"
         }, function (res) {
             res.data.forEach((item) => {
-                console.log(item);
-                $("#modules").append("<option value='" + item.moduleName + "'>" + item.moduleName + "</option>");
+                console.log(parent.curDic);
+                if (item.moduleName == parent.curDic.moduleName) {
+                    $("#modules").append("<option value='" + item.moduleName + "' selected>" + item.moduleName + "</option>");
+                } else {
+                    $("#modules").append("<option value='" + item.moduleName + "'>" + item.moduleName + "</option>");
+                }
+            });
+            form.render();
+        }, function (res) {
+            showError(res.message)
+        });
+    }
+    /**
+     * 动态加载组名称
+     */
+    function initGroup() {
+        http({
+            url: "/dic/all-group",
+            method: "get",
+            dataType: "json",
+            data: {
+                "moduleName": parent.curDic.moduleName
+            },
+        }, function (res) {
+            res.data.forEach((item) => {
+                if (item.moduleName == parent.curDic.moduleName) {
+                    $("#groups").append("<option value='" + item.groupName + "' selected>" + item.groupName + "</option>");
+                }else{
+                    $("#groups").append("<option value='" + item.groupName + "'>" + item.groupName + "</option>");
+                }
             });
             form.render();
         }, function (res) {
@@ -190,7 +222,6 @@
             },
             dataType: "json"
         }, function (res) {
-            console.log(res.data);
             res.data.forEach((item) => {
                 $("#groups").append("<option value='" + item.groupName + "'>" + item.groupName + "</option>");
             });

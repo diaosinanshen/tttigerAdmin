@@ -20,6 +20,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotBlank;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -89,18 +90,28 @@ public class ManagerController implements BaseCrudController<Manager> {
      * @param managerChangePwdDTO 管理新密码传输实体
      * @return
      */
-    @PostMapping("/auth2")
-    public ResultMap<Object> changePassword(ManagerChangePwdDTO managerChangePwdDTO){
+    @PostMapping("/change-password")
+    @SecurityParameter
+    public ResultMap<Object> changePassword(@RequestBody ManagerChangePwdDTO managerChangePwdDTO){
+        if(!managerChangePwdDTO.getConfirmNewPwd().equals(managerChangePwdDTO.getNewPwd())){
+            return ResultMap.data().fail().message("新密码与确认密码不一致");
+        }
         Authentication currentUser = SecurityUtil.getCurrentUser();
         QueryWrapper<Manager> wrapper = new QueryWrapper<>();
         wrapper.lambda().eq(Manager::getManagerAccount,currentUser.getName());
         ResultMap<Manager> resultMap = managerService.selectOne(wrapper);
         String oldPwd = passwordEncoder.encode(managerChangePwdDTO.getOldPwd());
-        if(!oldPwd.equals(resultMap.getData().getManagerPassword())){
+        Manager manager = resultMap.getData();
+        if(!oldPwd.equals(manager.getManagerPassword())){
             return ResultMap.data().fail("原始密码不正确");
+        }else{
+            String newPwd = passwordEncoder.encode(managerChangePwdDTO.getNewPwd());
+            manager.setManagerPassword(newPwd);
+            manager.setUpdateTime(new Date());
+            if (managerService.updateById(manager).isSuccess()) {
+                return ResultMap.data().success().message("修改成功");
+            }
         }
-
-
         return ResultMap.data().fail();
     }
 

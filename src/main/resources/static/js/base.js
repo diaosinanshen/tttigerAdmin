@@ -1,4 +1,5 @@
-var SERVER_URL = "http://localhost:8899";
+// var SERVER_URL = "http://localhost:8899";
+var SERVER_URL = "";
 // 自动包含加密js
 document.write ('<script src=" /js/cryptojs/rollups/aes.js"></script>');
 /**

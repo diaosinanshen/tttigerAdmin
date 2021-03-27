@@ -1,12 +1,8 @@
 package com.tttiger.admin.utils;
 
 import com.alibaba.fastjson.JSON;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tttiger.admin.bean.sys.security.Aes;
-import com.tttiger.admin.bean.sys.security.IpAddress;
 import com.tttiger.admin.bean.sys.security.Rsa;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -14,12 +10,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.text.SimpleDateFormat;
 
 /**
  * @author 秦浩桐
@@ -136,54 +126,6 @@ public class SecurityUtil {
             ip = request.getRemoteAddr();
         }
         return "0:0:0:0:0:0:0:1".equals(ip) ? "127.0.0.1" : ip;
-    }
-
-
-    /**
-     * 调用太平洋网络IP地址查询Web接口（http://whois.pconline.com.cn/），返回ip、地理位置
-     */
-    public static IpAddress getIpAddressByRequest(String ip){
-        //查本机
-        String url = "http://whois.pconline.com.cn/ipJson.jsp?json=true";
-
-        //查指定ip
-        if(!StringUtils.isEmpty(ip)){
-            url = "http://whois.pconline.com.cn/ipJson.jsp?json=true&ip=" + ip;
-        }
-
-        StringBuilder inputLine = new StringBuilder();
-        String read;
-        try {
-            HttpURLConnection urlConnection = (HttpURLConnection) new URL(url).openConnection();
-            urlConnection.setRequestProperty("Charset", "GBK");
-            BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), "GBK"));
-            while ((read = in.readLine()) != null) {
-                inputLine.append(read);
-            }
-            in.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        IpAddress ipVo = null;
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            //当属性的值为空（null或者""）时，不进行序列化，可以减少数据传输
-            mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
-            //设置日期格式
-            mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
-            //转换成IpVo
-            ipVo = mapper.readValue(new String(inputLine.toString().getBytes("GBK"), "GBK"), IpAddress.class);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return ipVo;
-    }
-
-    /**
-     * 直接根据访问者的Request，返回ip、地理位置
-     */
-    public static IpAddress getIpAddressByRequest(HttpServletRequest request){
-        return SecurityUtil.getIpAddressByRequest(SecurityUtil.getIPAddress(request));
     }
 
     private SecurityUtil(){}

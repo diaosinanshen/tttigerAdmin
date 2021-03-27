@@ -10,18 +10,15 @@ import lombok.Data;
  * @description
  */
 @Data
-public class IpAddress {
+public class IpBlacklist {
     @TableId(type = IdType.INPUT)
     private Long id;
     private String ip;
-    private String pro;
-    private String proCode;
+    private String province;
+    private String provinceCode;
     private String city;
     private String cityCode;
     private String region;
     private String regionCode;
-    private String addr;
-
-    private String regionNames;
-    private String err;
+    private String address;
 }

@@ -1,7 +1,6 @@
 package com.tttiger.admin.security;
 
 import com.alibaba.fastjson.JSON;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tttiger.admin.utils.AesUtil;
 import org.apache.commons.io.IOUtils;
 import org.springframework.http.MediaType;
@@ -29,7 +28,6 @@ public class JsonUsernamePasswordAuthenticationFilter extends UsernamePasswordAu
         if (request.getContentType().equals(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 || request.getContentType().equals(MediaType.APPLICATION_JSON_VALUE)) {
 
-            ObjectMapper mapper = new ObjectMapper();
             UsernamePasswordAuthenticationToken authRequest = null;
             try (InputStream is = request.getInputStream()) {
                 ServletInputStream inputStream = request.getInputStream();

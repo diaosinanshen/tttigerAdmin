@@ -9,6 +9,7 @@ import com.tttiger.admin.common.ResultMap;
 import com.tttiger.admin.common.annotation.security.SecurityParameter;
 import com.tttiger.admin.common.annotation.validate.Update;
 import com.tttiger.admin.controller.base.BaseDeleteController;
+import com.tttiger.admin.service.sys.ApplicationConfigService;
 import com.tttiger.admin.service.sys.BaseService;
 import com.tttiger.admin.service.sys.DictionaryService;
 import com.tttiger.admin.utils.StringUtil;
@@ -31,13 +32,19 @@ public class DictionaryController implements BaseDeleteController<Dictionary> {
 
     private DictionaryService dictionaryService;
 
+    private ApplicationConfigService applicationConfigService;
+
     @SecurityParameter
     @PostMapping("/add")
     public ResultMap<Object> add(@RequestBody Dictionary dictionary) {
         Date cur = new Date();
         dictionary.setUpdateTime(cur);
         dictionary.setCreateTime(cur);
-        return dictionaryService.insert(dictionary);
+        if (dictionaryService.insert(dictionary).isSuccess()) {
+            applicationConfigService.reloadConfig();
+            return ResultMap.data().success().message("添加成功");
+        }
+        return ResultMap.data().fail().message("添加失败");
     }
 
     @SecurityParameter
@@ -45,7 +52,11 @@ public class DictionaryController implements BaseDeleteController<Dictionary> {
     public ResultMap<Object> update(@Validated({Update.class}) @RequestBody Dictionary dictionary) {
         Date cur = new Date();
         dictionary.setUpdateTime(cur);
-        return dictionaryService.updateById(dictionary);
+        if (dictionaryService.updateById(dictionary).isSuccess()) {
+            applicationConfigService.reloadConfig();
+            return ResultMap.data().success().message("更新成功");
+        }
+        return ResultMap.data().fail().message("更新失败");
     }
 
 

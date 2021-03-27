@@ -1,5 +1,5 @@
 server:
-  port: 8899
+  port: 8080
 spring:
 # 模板引擎
   thymeleaf:
@@ -9,8 +9,8 @@ spring:
 # mysql数据源
   datasource:
     username: root
-    password: 123456
-    url: jdbc:mysql://localhost:3306/qin_admin?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+    password: qin10010.
+    url: jdbc:mysql://47.95.242.185:12345/qin_admin?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
     type: com.alibaba.druid.pool.DruidDataSource
     initialSize: 5
     minIdle: 5
@@ -47,8 +47,8 @@ mybatis-plus:
   configuration:
     safe-row-bounds-enabled: true
 
-# logback
+# lombok
 logging:
   level:
     com.tttiger: info
-  path: classpath:logback.xml
+  path: classpath:logback-test.xml

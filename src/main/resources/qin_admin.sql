@@ -3,15 +3,15 @@
 
  Source Server         : 本机
  Source Server Type    : MySQL
- Source Server Version : 80018
- Source Host           : 127.0.0.1:3306
+ Source Server Version : 50641
+ Source Host           : localhost:3306
  Source Schema         : qin_admin
 
  Target Server Type    : MySQL
- Target Server Version : 80018
+ Target Server Version : 50641
  File Encoding         : 65001
 
- Date: 05/03/2021 14:50:24
+ Date: 02/04/2021 20:01:09
 */
 
 SET NAMES utf8mb4;
@@ -24,9 +24,7 @@ DROP TABLE IF EXISTS `dictionary`;
 CREATE TABLE `dictionary`  (
   `dic_id` int(11) NOT NULL AUTO_INCREMENT,
   `module_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL COMMENT '字典所属模块名称',
-  `module_description` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL COMMENT '模块描述',
   `group_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL COMMENT '字典所属组名称',
-  `group_description` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL COMMENT '字典所属组描述',
   `dic_key` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL COMMENT '字典标识',
   `dic_value` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL COMMENT '字典值',
   `value_type` int(255) NOT NULL COMMENT '字典值类型 0：字符串；1：布尔值；2：数字；3：时间',
@@ -34,30 +32,29 @@ CREATE TABLE `dictionary`  (
   `create_time` datetime(0) NOT NULL COMMENT '创建时间',
   `update_time` datetime(0) NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`dic_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_bin ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_bin ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of dictionary
 -- ----------------------------
-INSERT INTO `dictionary` VALUES (1, 'system', '系统模块', 'flag', '标识组', 'ip_record', 'true', 2, '是否开始登录ip地址记录', '2020-12-23 09:40:04', '2020-12-23 09:40:08');
-INSERT INTO `dictionary` VALUES (2, 'system', '系统模块', 'flag', '标识组', 'single_login', 'false', 2, '是否开始单点登录', '2020-12-23 16:10:19', '2020-12-23 16:10:23');
+INSERT INTO `dictionary` VALUES (2, '系统管理', '标识', 'single_login', 'true', 0, '是否开始单点登录', '2020-12-23 16:10:19', '2021-03-07 11:17:20');
 
 -- ----------------------------
--- Table structure for ip_address
+-- Table structure for ip_blacklist
 -- ----------------------------
-DROP TABLE IF EXISTS `ip_address`;
-CREATE TABLE `ip_address`  (
+DROP TABLE IF EXISTS `ip_blacklist`;
+CREATE TABLE `ip_blacklist`  (
   `id` bigint(20) NOT NULL,
   `ip` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL,
-  `pro` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL,
-  `pro_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL,
+  `province` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL,
+  `province_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL,
   `city` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL,
   `city_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL,
   `region` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL,
   `region_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL,
-  `addr` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL,
+  `address` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_bin ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_bin ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Table structure for manager
@@ -74,17 +71,15 @@ CREATE TABLE `manager`  (
   `update_time` datetime(0) NULL DEFAULT NULL,
   PRIMARY KEY (`manager_id`) USING BTREE,
   UNIQUE INDEX `manager_account`(`manager_account`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of manager
 -- ----------------------------
-INSERT INTO `manager` VALUES (1, 'admin', '123456', 'admin', NULL, NULL, '2020-06-11 00:05:27', '2020-06-11 00:05:30');
+INSERT INTO `manager` VALUES (1, 'admin', '123456', 'admin', NULL, NULL, '2020-06-11 00:05:27', '2021-03-10 19:27:56');
 INSERT INTO `manager` VALUES (3, 'manager', '123456', '管理', NULL, NULL, NULL, NULL);
 INSERT INTO `manager` VALUES (4, 'finance', '123456', '财务', NULL, NULL, NULL, NULL);
 INSERT INTO `manager` VALUES (5, 'admin2', '123456', '加密账号', NULL, NULL, NULL, NULL);
-INSERT INTO `manager` VALUES (6, 'admin3', '123456', '测试测试', NULL, NULL, NULL, NULL);
-INSERT INTO `manager` VALUES (7, 'ceshi1', '123456', '测试加密', NULL, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for manager_role
@@ -97,7 +92,7 @@ CREATE TABLE `manager_role`  (
   `create_time` datetime(0) NULL DEFAULT NULL,
   `update_time` datetime(0) NULL DEFAULT NULL,
   PRIMARY KEY (`mr_id`, `role_id`, `manager_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of manager_role
@@ -119,7 +114,7 @@ CREATE TABLE `menu`  (
   `status` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '状态,显示或隐藏',
   `sort` int(10) NULL DEFAULT NULL COMMENT '排序字段',
   PRIMARY KEY (`menu_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of menu
@@ -142,7 +137,7 @@ CREATE TABLE `role`  (
   `create_time` datetime(0) NULL DEFAULT NULL,
   `update_time` datetime(0) NULL DEFAULT NULL,
   PRIMARY KEY (`role_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 34 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 33 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of role
@@ -161,7 +156,7 @@ CREATE TABLE `role_menu`  (
   `create_time` datetime(0) NULL DEFAULT NULL,
   `update_time` datetime(0) NULL DEFAULT NULL,
   PRIMARY KEY (`rm_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 133 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 134 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of role_menu

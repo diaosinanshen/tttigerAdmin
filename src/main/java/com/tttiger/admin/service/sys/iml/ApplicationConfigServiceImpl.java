@@ -27,20 +27,20 @@ public class ApplicationConfigServiceImpl implements ApplicationConfigService, A
     private Map<UniteDicKey, List<Dictionary>> selectWithModuleGroupDic = new HashMap<>();
 
     @Override
-    public List<Dictionary> getConfig(String moduleName, String groupName, String dicKey) {
-        while (this.loading){
+    public List<Dictionary> getConfig(String moduleKey, String groupKey, String dicKey) {
+        while (this.loading) {
             Thread.yield();
         }
-        UniteDicKey uniteDicKey = new UniteDicKey(moduleName,groupName,dicKey);
+        UniteDicKey uniteDicKey = new UniteDicKey(moduleKey, groupKey, dicKey);
         return selectWithModuleGroupDic.get(uniteDicKey);
     }
 
     @Override
-    public Dictionary getSingleConfig(String moduleName, String groupName, String dicKey) {
-        while (this.loading){
+    public Dictionary getSingleConfig(String moduleKey, String groupKey, String dicKey) {
+        while (this.loading) {
             Thread.yield();
         }
-        UniteDicKey uniteDicKey = new UniteDicKey(moduleName,groupName,dicKey);
+        UniteDicKey uniteDicKey = new UniteDicKey(moduleKey, groupKey, dicKey);
         List<Dictionary> dictionaries = selectWithModuleGroupDic.get(uniteDicKey);
         return dictionaries.get(0);
     }
@@ -48,7 +48,7 @@ public class ApplicationConfigServiceImpl implements ApplicationConfigService, A
     @Override
     public void reloadConfig() {
         this.loading = true;
-        this.selectWithModuleGroupDic = null;
+        this.selectWithModuleGroupDic.clear();
         loadConfig();
     }
 
@@ -57,11 +57,11 @@ public class ApplicationConfigServiceImpl implements ApplicationConfigService, A
         loadConfig();
     }
 
-    private void loadConfig(){
+    private void loadConfig() {
         this.loading = true;
         ResultMap<List<Dictionary>> listResultMap = dictionaryService.selectList(null);
         listResultMap.getData().forEach(x -> {
-            UniteDicKey uniteDicKey = new UniteDicKey(x.getModuleName(),x.getGroupName(),x.getDicKey());
+            UniteDicKey uniteDicKey = new UniteDicKey(x.getModuleKey(), x.getGroupKey(), x.getDicKey());
             if (selectWithModuleGroupDic.containsKey(uniteDicKey)) {
                 selectWithModuleGroupDic.get(uniteDicKey).add(x);
             } else {
@@ -74,24 +74,24 @@ public class ApplicationConfigServiceImpl implements ApplicationConfigService, A
     }
 
     class UniteDicKey {
-        private String moduleName;
-        private String groupName;
+        private String moduleKey;
+        private String groupKey;
         private String dicKey;
 
-        public String getModuleName() {
-            return moduleName;
+        public String getModuleKey() {
+            return moduleKey;
         }
 
-        public void setModuleName(String moduleName) {
-            this.moduleName = moduleName;
+        public void setModuleKey(String moduleKey) {
+            this.moduleKey = moduleKey;
         }
 
-        public String getGroupName() {
-            return groupName;
+        public String getGroupKey() {
+            return groupKey;
         }
 
-        public void setGroupName(String groupName) {
-            this.groupName = groupName;
+        public void setGroupKey(String groupKey) {
+            this.groupKey = groupKey;
         }
 
         public String getDicKey() {
@@ -111,22 +111,22 @@ public class ApplicationConfigServiceImpl implements ApplicationConfigService, A
                 return false;
             }
             UniteDicKey that = (UniteDicKey) o;
-            return Objects.equals(moduleName, that.moduleName) &&
-                    Objects.equals(groupName, that.groupName) &&
-                    Objects.equals(dicKey, that.dicKey);
+            return moduleKey.equals(that.moduleKey) &&
+                    groupKey.equals(that.groupKey) &&
+                    dicKey.equals(that.dicKey);
         }
 
         @Override
         public int hashCode() {
-
-            return Objects.hash(moduleName, groupName, dicKey);
+            return Objects.hash(moduleKey, groupKey, dicKey);
         }
 
-        private UniteDicKey(){}
+        private UniteDicKey() {
+        }
 
-        public UniteDicKey(String moduleName, String groupName, String dicKey) {
-            this.moduleName = moduleName;
-            this.groupName = groupName;
+        public UniteDicKey(String moduleKey, String groupKey, String dicKey) {
+            this.moduleKey = moduleKey;
+            this.groupKey = groupKey;
             this.dicKey = dicKey;
         }
     }

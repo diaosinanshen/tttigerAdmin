@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.tttiger.admin.bean.sys.Dictionary;
 import com.tttiger.admin.common.ResultMap;
 import com.tttiger.admin.common.annotation.security.SecurityParameter;
+import com.tttiger.admin.common.annotation.validate.Add;
 import com.tttiger.admin.common.annotation.validate.Update;
 import com.tttiger.admin.controller.base.BaseDeleteController;
 import com.tttiger.admin.service.sys.ApplicationConfigService;
@@ -36,7 +37,7 @@ public class DictionaryController implements BaseDeleteController<Dictionary> {
 
     @SecurityParameter
     @PostMapping("/add")
-    public ResultMap<Object> add(@RequestBody Dictionary dictionary) {
+    public ResultMap<Object> add(@Validated({Add.class}) @RequestBody Dictionary dictionary) {
         Date cur = new Date();
         dictionary.setUpdateTime(cur);
         dictionary.setCreateTime(cur);
@@ -71,11 +72,11 @@ public class DictionaryController implements BaseDeleteController<Dictionary> {
     @SecurityParameter(decrypt = false)
     public ResultMap<IPage<Dictionary>> select(@RequestParam(required = false, defaultValue = "1", value = "page") Integer page,
                                                @RequestParam(required = false, defaultValue = "10", value = "limit") Integer limit,
-                                               String moduleName,String groupName, String dicKey) {
+                                               String moduleKey,String groupKey, String dicKey) {
         QueryWrapper<Dictionary> queryWrapper = new QueryWrapper<>();
         LambdaQueryWrapper<Dictionary> lambda = queryWrapper.lambda();
-        lambda.eq(StringUtil.isNotEmpty(moduleName),Dictionary::getModuleName,moduleName);
-        lambda.eq(StringUtil.isNotEmpty(groupName),Dictionary::getGroupName,groupName);
+        lambda.eq(StringUtil.isNotEmpty(moduleKey),Dictionary::getModuleKey,moduleKey);
+        lambda.eq(StringUtil.isNotEmpty(groupKey),Dictionary::getGroupKey,groupKey);
         lambda.eq(StringUtil.isNotEmpty(dicKey),Dictionary::getDicKey,dicKey);
         return dictionaryService.selectPage(new Page<>(page, limit), queryWrapper);
     }
@@ -84,15 +85,15 @@ public class DictionaryController implements BaseDeleteController<Dictionary> {
     @GetMapping("/all-module")
     public ResultMap<List<Dictionary>> selectAllModule() {
         QueryWrapper<Dictionary> queryWrapper = new QueryWrapper<>();
-        queryWrapper.select("DISTINCT module_name");
+        queryWrapper.select("DISTINCT module_name,module_key");
         return dictionaryService.selectList(queryWrapper);
     }
 
     @GetMapping("/all-group")
-    public ResultMap<List<Dictionary>> selectAllGroup(String moduleName) {
+    public ResultMap<List<Dictionary>> selectAllGroup(String moduleKey) {
         QueryWrapper<Dictionary> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(Dictionary::getModuleName,moduleName);
-        queryWrapper.select("DISTINCT group_name");
+        queryWrapper.lambda().eq(Dictionary::getModuleKey,moduleKey);
+        queryWrapper.select("DISTINCT group_name,group_key");
         return dictionaryService.selectList(queryWrapper);
     }
 

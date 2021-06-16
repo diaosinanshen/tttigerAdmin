@@ -19,29 +19,34 @@
 </head>
 <body>
 <div style="padding:20px 50px 0 50px">
-    <div class="layui-form-item">
-        <label class="layui-form-label">菜单名称</label>
-        <div class="layui-input-block">
-            <input type="text" name="menuName" id="menuName" autocomplete="off" class="layui-input">
+    <form class="layui-form" action="">
+        <div class="layui-form-item">
+            <label class="layui-form-label">菜单名称</label>
+            <div class="layui-input-block">
+                <input type="text" name="menuName" id="menuName" autocomplete="off" class="layui-input"
+                       lay-verify="menuName">
+            </div>
         </div>
-    </div>
-    <div class="layui-form-item">
-        <label for="" class="layui-form-label">展示图标</label>
-        <div class="layui-input-block">
-            <input type="text" id="iconPicker" lay-filter="iconPicker" class="hide">
+        <div class="layui-form-item">
+            <label for="" class="layui-form-label">展示图标</label>
+            <div class="layui-input-block">
+                <input type="text" id="iconPicker" lay-filter="iconPicker" class="hide">
+            </div>
         </div>
-    </div>
-    <div class="layui-form-item">
-        <label class="layui-form-label">排序号</label>
-        <div class="layui-input-block">
-            <input type="text" name="sort" id="sort" autocomplete="off" class="layui-input">
+        <div class="layui-form-item">
+            <label class="layui-form-label">排序号</label>
+            <div class="layui-input-block">
+                <input type="text" name="sort" id="sort" autocomplete="off" class="layui-input"
+                       lay-verify="number">
+            </div>
         </div>
-    </div>
-    <div style="text-align:center;padding: 40px;">
-        <button class="layui-btn layui-btn-lg layui-btn-primary" onclick="closePage()">取消</button>
-        <button class="layui-btn layui-btn-lg layui-btn-normal" style="margin-left: 120px" onclick="updateMenu()">保存
-        </button>
-    </div>
+        <div style="text-align:center;padding: 40px;">
+            <button class="layui-btn layui-btn-lg layui-btn-primary" onclick="closePage()">取消</button>
+            <button class="layui-btn layui-btn-lg layui-btn-normal" style="margin-left: 120px" lay-submit=""
+                    lay-filter="updateMenu">保存
+            </button>
+        </div>
+    </form>
 </div>
 </body>
 
@@ -50,12 +55,26 @@
 <script src="/lib/layui-v2.5.4/layui.js" charset="utf-8"></script>
 <script src="/js/lay-config.js?v=1.0.4" charset="utf-8"></script>
 <script>
+    var form;
     layui.use(['iconPickerFa', 'form', 'layer'], function () {
         var iconPickerFa = layui.iconPickerFa,
             form = layui.form,
-            layer = layui.layer,
             $ = layui.$;
-
+        form.verify({
+            menuName: function (value) {
+                if (value.trim().length <= 0) {
+                    return '角色名称不能为空';
+                }
+            },
+            iconPicker: function (value) {
+                if (value.trim().length <= 0) {
+                    return '图标不能为空';
+                }
+            }
+        });
+        form.on('submit(updateMenu)', function (data) {
+            updateMenu();
+        });
         iconPickerFa.render({
             // 选择器，推荐使用input
             elem: '#iconPicker',
@@ -94,7 +113,7 @@
             contentType: "application/json",
             dataType: "json"
         }, function (res) {
-            showSuccess(res.message,function () {
+            showSuccess(res.message, function () {
                 parent.getData();
                 closePage();
             });

@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.tttiger.admin.common.annotation.validate.Update;
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import java.util.List;
@@ -22,10 +23,14 @@ public class Menu {
     @TableId(type = IdType.AUTO)
     @NotNull(message = "主键不能为null",groups = {Update.class})
     private Integer menuId;
+
+    @NotBlank(message = "名称不能为空",groups = {Update.class})
     private String title;
 
-    @Null(message = "主键不能为null",groups = {Update.class})
+    @Null(message = "非法参数",groups = {Update.class})
     private String href;
+
+    @Null(message = "非法参数",groups = {Update.class})
     private Integer parentMenu;
 
     @TableField(exist = false)
@@ -35,5 +40,6 @@ public class Menu {
     @TableField(exist = false)
     private List<Role> roles;
 
+    @NotNull(message = "排序不能为空",groups = {Update.class})
     private Integer sort;
 }

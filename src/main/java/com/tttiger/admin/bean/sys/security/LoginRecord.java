@@ -1,5 +1,7 @@
 package com.tttiger.admin.bean.sys.security;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 
 import java.util.Date;
@@ -9,6 +11,7 @@ import java.util.Date;
  */
 @Data
 public class LoginRecord {
+    @TableId(type = IdType.AUTO)
     private Integer id;
     private String account;
     private Date loginTime;

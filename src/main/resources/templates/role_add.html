@@ -17,23 +17,28 @@
 </head>
 <body>
 <div style="padding:20px 50px 0 50px">
-    <div class="layui-form-item">
-        <label class="layui-form-label">角色名称</label>
-        <div class="layui-input-block">
-            <input type="text" name="roleName" id="roleName" autocomplete="off" class="layui-input">
+
+    <form class="layui-form" action="">
+        <div class="layui-form-item">
+            <label class="layui-form-label">角色名称</label>
+            <div class="layui-input-block">
+                <input type="text" name="roleName" id="roleName" autocomplete="off" class="layui-input"
+                       lay-verify="roleName">
+            </div>
         </div>
-    </div>
-    <div class="layui-form-item">
-        <label class="layui-form-label">所有权限</label>
-        <div class="layui-input-block">
-            <div id="menuTree"></div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">所有权限</label>
+            <div class="layui-input-block">
+                <div id="menuTree"></div>
+            </div>
         </div>
-    </div>
-    <div style="text-align:center;padding: 40px;">
-        <button class="layui-btn layui-btn-lg layui-btn-primary" onclick="closePage()">取消</button>
-        <button class="layui-btn layui-btn-lg layui-btn-normal" style="margin-left: 120px" onclick="addRole()">添加
-        </button>
-    </div>
+        <div style="text-align:center;padding: 40px;">
+            <button class="layui-btn layui-btn-lg layui-btn-primary" onclick="closePage()">取消</button>
+            <button class="layui-btn layui-btn-lg layui-btn-normal" style="margin-left: 120px" lay-submit=""
+                    lay-filter="addRole">添加
+            </button>
+        </div>
+    </form>
 </div>
 </body>
 
@@ -43,10 +48,20 @@
 
 <script>
     var menuTree;
-    layui.use(['tree', 'util'], function () {
+    var form;
+    layui.use(['tree', 'util', 'form'], function () {
+        form = layui.form;
+        form.verify({
+            roleName: function (value) {
+                if (value.trim().length <= 0) {
+                    return '角色名称不能为空';
+                }
+            }
+        });
+        form.on('submit(addRole)', function (data) {
+            return addRole();
+        });
         menuTree = layui.tree;
-        var layer = layui.layer;
-        var util = layui.util;
         http({
             url: "/role/select-menu"
             , method: "get"
@@ -88,10 +103,18 @@
         }
     }
 
+    /**
+     * 添加角色
+     * @returns {boolean}
+     */
     function addRole() {
         var data = menuTree.getChecked('menuTreeFlag');
         var arr = new Array();
         getSelectMenuId(data, arr);
+        if(arr.length == 0){
+            showError("角色权限不能为空");
+            return false;
+        }
         var role = {};
         role.roleName = $("#roleName").val();
         role.menus = arr;
@@ -102,13 +125,14 @@
             contentType: "application/json",
             dataType: "json"
         }, function (res) {
-            showSuccess(res.message,function () {
+            showSuccess(res.message, function () {
                 closePage();
             });
         }, function (res) {
             showError(res.message)
         })
     }
+
     function closePage() {
         var index = parent.layer.getFrameIndex(window.name);
         parent.layer.close(index);

@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>用户管理</title>
+    <title>管理人员</title>
 
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta http-equiv="Access-Control-Allow-Origin" content="*">
@@ -97,13 +97,13 @@
                 managerName = data.managerName;
                 managerAccount = data.managerAccount;
                 managerId = data.managerId;
-                openPage("授权", "/manager/to-manager-authority", '40%', '60%');
+                openPage("授权", "/manager/to-manager-authority");
             }
         });
     });
 
     function toAddManager() {
-        openPage("添加管理", "/manager/to-manager-add", '60%', '80%');
+        openPage("添加管理", "/manager/to-manager-add");
     }
 
     getData();

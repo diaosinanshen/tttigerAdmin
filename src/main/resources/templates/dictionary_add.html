@@ -30,10 +30,24 @@
             </div>
         </div>
         <div class="layui-form-item">
+            <label class="layui-form-label">模块键</label>
+            <div class="layui-input-block">
+                <input type="text" name="moduleKey" id="moduleKey" autocomplete="off"
+                       class="layui-input" lay-verify="moduleKey" disabled>
+            </div>
+        </div>
+        <div class="layui-form-item">
             <label class="layui-form-label">组名称</label>
             <div class="layui-input-block">
-                <select id="groups" name="groupName" lay-verify="required" lay-search="">
+                <select id="groups" name="groupName" lay-verify="required" lay-filter="groups" lay-search="">
                 </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">组键</label>
+            <div class="layui-input-block">
+                <input type="text" name="groupKey" id="groupKey" autocomplete="off"
+                       class="layui-input" lay-verify="groupKey" disabled>
             </div>
         </div>
         <div class="layui-form-item">
@@ -51,7 +65,8 @@
                     <option value="1">布尔</option>
                     <option value="2">数值</option>
                     <option value="3">日期</option>
-                    <option value="4">日期时间</option>
+                    <option value="4">时间</option>
+                    <option value="5">日期时间</option>
                 </select>
             </div>
         </div>
@@ -86,6 +101,8 @@
     var form;
     var laydate;
     var $;
+    var moduleMap = new Map();
+    var groupMap;
     layui.use(['form', 'laydate'], function () {
         form = layui.form;
         laydate = layui.laydate;
@@ -93,16 +110,18 @@
         //自定义验证规则
         form.verify({
             dicKey: [
-                /^[\S]{2,12}$/
-                , '字典key必须2到12位，且不能出现空格'
+                /^[\w]{1,255}$/
+                , '字典key必须为英文1到255位，且不能出现空格'
             ]
-            , dicValue: [
-                /^[\S]{2,12}$/
-                , '字典value必须6到12位，且不能出现空格'
+            ,dicValue: [
+                /^[\S]{1,255}$/
+                , '字典value必须为1到255位，且不能出现空格'
             ]
         });
         form.on('submit(addDic)', function (data) {
-            console.log(data);
+            if(data.field.valueType == '1'){
+                data.field.dicValue = data.field.dicValue == 'ON' ? '1':'0';
+            }
             http({
                 url: "/dic/add",
                 method: "post",
@@ -120,11 +139,13 @@
             return false;
         });
         form.on('select(modules)', function (data) {
-            console.log(data);
-            buildGroups(data.value);
+            $("#moduleKey").val(moduleMap.get(data.value));
+            buildGroups(moduleMap.get(data.value));
+        });
+        form.on('select(groups)', function (data) {
+            $("#groupKey").val(groupMap.get(data.value));
         });
         form.on('select(types)', function (data) {
-            console.log(data.value);
             if (data.value === "0") {
                 $("#dicValue").empty()
                     .append("<input type='text' name='dicValue' lay-verify='dicValue' autocomplete='off' class='layui-input'>");
@@ -136,7 +157,7 @@
                 form.render();
             } else if (data.value === "2") {
                 $("#dicValue").empty()
-                    .append("<input type='text' name='dicValue' lay-verify='dicValue' autocomplete='off' class='layui-input'>");
+                    .append("<input type='text' name='dicValue' lay-verify='number' autocomplete='off' class='layui-input'>");
                 form.render();
             } else if (data.value === "3") {
                 $("#dicValue").empty()
@@ -146,6 +167,13 @@
                     type: 'date'
                 });
             } else if (data.value === "4") {
+                $("#dicValue").empty()
+                    .append("<input type='text' id='dateInput' name='dicValue' autocomplete='off' class='layui-input'>");
+                laydate.render({
+                    elem: '#dateInput',
+                    type: 'time'
+                });
+            } else if (data.value === "5") {
                 $("#dicValue").empty()
                     .append("<input type='text' id='dateInput' name='dicValue' autocomplete='off' class='layui-input'>");
                 laydate.render({
@@ -168,7 +196,7 @@
             dataType: "json"
         }, function (res) {
             res.data.forEach((item) => {
-                console.log(item);
+                moduleMap.set(item.moduleName,item.moduleKey);
                 $("#modules").append("<option value='" + item.moduleName + "'>" + item.moduleName + "</option>");
             });
             form.render();
@@ -181,22 +209,24 @@
      * 动态加载模块中的组
      * @param moduleName
      */
-    function buildGroups(moduleName) {
+    function buildGroups(moduleKey) {
         http({
             url: "/dic/all-group",
             method: "get",
             data: {
-                "moduleName": moduleName
+                "moduleKey": moduleKey
             },
             dataType: "json"
         }, function (res) {
-            console.log(res.data);
+            groupMap = new Map();
             res.data.forEach((item) => {
+                groupMap.set(item.groupName,item.groupKey);
                 $("#groups").append("<option value='" + item.groupName + "'>" + item.groupName + "</option>");
             });
             if (res.data == null || res.data == 0) {
                 $("#groups").empty();
             }
+            $("#groupKey").val($("#groups").val());
             form.render();
         }, function (res) {
             showError(res.message);

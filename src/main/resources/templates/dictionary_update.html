@@ -30,10 +30,24 @@
             </div>
         </div>
         <div class="layui-form-item">
+            <label class="layui-form-label">模块键</label>
+            <div class="layui-input-block">
+                <input type="text" name="moduleKey" id="moduleKey" autocomplete="off"
+                       class="layui-input" lay-verify="moduleKey" disabled>
+            </div>
+        </div>
+        <div class="layui-form-item">
             <label class="layui-form-label">组名称</label>
             <div class="layui-input-block">
                 <select id="groups" name="groupName" lay-verify="required" lay-search="">
                 </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">组键</label>
+            <div class="layui-input-block">
+                <input type="text" name="groupKey" id="groupKey" autocomplete="off"
+                       class="layui-input" lay-verify="groupKey" disabled>
             </div>
         </div>
         <div class="layui-form-item">
@@ -51,7 +65,8 @@
                     <option value="1">布尔</option>
                     <option value="2">数值</option>
                     <option value="3">日期</option>
-                    <option value="4">日期时间</option>
+                    <option value="4">时间</option>
+                    <option value="5">日期时间</option>
                 </select>
             </div>
         </div>
@@ -102,6 +117,9 @@
             ]
         });
         form.on('submit(updateDic)', function (data) {
+            if(data.field.valueType == '1'){
+                data.field.dicValue = data.field.dicValue == 'ON' ? '1':'0';
+            }
             data.field.dicId = parent.curDic.dicId;
             http({
                 url: "/dic/update",
@@ -150,6 +168,13 @@
                     .append("<input type='text' id='dateInput' name='dicValue' autocomplete='off' class='layui-input'>");
                 laydate.render({
                     elem: '#dateInput',
+                    type: 'time'
+                });
+            } else if (data.value === "5") {
+                $("#dicValue").empty()
+                    .append("<input type='text' id='dateInput' name='dicValue' autocomplete='off' class='layui-input'>");
+                laydate.render({
+                    elem: '#dateInput',
                     type: 'datetime'
                 });
             }
@@ -163,7 +188,7 @@
 
 
     /**
-     * 动态加载模块名称
+     * 动态加载全部模块并选中
      */
     function buildModules() {
         http({
@@ -173,8 +198,10 @@
         }, function (res) {
             res.data.forEach((item) => {
                 console.log(parent.curDic);
-                if (item.moduleName == parent.curDic.moduleName) {
+                if (item.moduleKey == parent.curDic.moduleKey) {
+                    debugger
                     $("#modules").append("<option value='" + item.moduleName + "' selected>" + item.moduleName + "</option>");
+                    $("#moduleKey").val(item.moduleKey);
                 } else {
                     $("#modules").append("<option value='" + item.moduleName + "'>" + item.moduleName + "</option>");
                 }
@@ -193,12 +220,13 @@
             method: "get",
             dataType: "json",
             data: {
-                "moduleName": parent.curDic.moduleName
+                "moduleKey": parent.curDic.moduleKey
             },
         }, function (res) {
             res.data.forEach((item) => {
-                if (item.moduleName == parent.curDic.moduleName) {
+                if (item.groupKey == parent.curDic.groupKey) {
                     $("#groups").append("<option value='" + item.groupName + "' selected>" + item.groupName + "</option>");
+                    $("#groupKey").val(item.groupKey);
                 }else{
                     $("#groups").append("<option value='" + item.groupName + "'>" + item.groupName + "</option>");
                 }
@@ -213,12 +241,12 @@
      * 动态加载模块中的组
      * @param moduleName
      */
-    function buildGroups(moduleName) {
+    function buildGroups(moduleKey) {
         http({
             url: "/dic/all-group",
             method: "get",
             data: {
-                "moduleName": moduleName
+                "moduleKey": moduleKey
             },
             dataType: "json"
         }, function (res) {

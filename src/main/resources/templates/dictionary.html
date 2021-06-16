@@ -118,8 +118,8 @@
                     curr: 1
                 }
                 , where:{
-                    'moduleName':result.moduleName,
-                    'groupName':result.groupName,
+                    'moduleKey':result.moduleName,
+                    'groupKey':result.groupName,
                     'dicKey':result.dicKey
                 }
             },'data');
@@ -130,7 +130,7 @@
         });
         buildModules();
 
-        // 新增修改
+        // 修改删除
         table.on('tool(dic)', function (obj) {
             var data = obj.data;
             if (obj.event === 'del') {
@@ -155,14 +155,14 @@
             }else  if(obj.event == 'edit'){
                 curDic = obj.data;
                 console.log(curDic);
-                openPage("修改字典", "/dic/to-dictionary-update", '60%', '90%');
+                openPage("修改字典", "/dic/to-dictionary-update", '60%');
             }
         });
     });
 
 
     function toAddManager() {
-        openPage("添加字典", "/dic/to-dictionary-add", '60%', '90%');
+        openPage("添加字典", "/dic/to-dictionary-add", '60%');
     }
 
 
@@ -176,7 +176,7 @@
             dataType: "json"
         }, function (res) {
             res.data.forEach((item) => {
-                $("#modules").append("<option value='" + item.moduleName + "'>" + item.moduleName + "</option>");
+                $("#modules").append("<option value='" + item.moduleKey + "'>" + item.moduleName + "</option>");
             });
             form.render();
         }, function (res) {
@@ -188,18 +188,17 @@
      * 动态加载模块中的组
      * @param moduleName
      */
-    function buildGroups(moduleName) {
+    function buildGroups(moduleKey) {
         http({
             url: "/dic/all-group",
             method: "get",
             data: {
-                "moduleName": moduleName
+                "moduleKey": moduleKey
             },
             dataType: "json"
         }, function (res) {
-            console.log(res.data);
             res.data.forEach((item) => {
-                $("#groups").append("<option value='" + item.groupName + "'>" + item.groupName + "</option>");
+                $("#groups").append("<option value='" + item.groupKey + "'>" + item.groupName + "</option>");
             });
             if (res.data == null || res.data == 0) {
                 $("#groups").empty();

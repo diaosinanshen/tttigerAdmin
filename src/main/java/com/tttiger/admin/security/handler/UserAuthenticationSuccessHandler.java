@@ -1,17 +1,16 @@
 package com.tttiger.admin.security.handler;
 
 import com.alibaba.fastjson.JSONObject;
-import com.tttiger.admin.bean.sys.Dictionary;
 import com.tttiger.admin.bean.sys.security.IpBlacklist;
+import com.tttiger.admin.bean.sys.security.LoginRecord;
 import com.tttiger.admin.common.ResultMap;
 import com.tttiger.admin.service.sys.ApplicationConfigService;
 import com.tttiger.admin.service.sys.IpBlacklistService;
+import com.tttiger.admin.service.sys.LoginRecordService;
 import com.tttiger.admin.utils.IpUtil;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.session.SessionInformation;
-import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -19,22 +18,23 @@ import org.springframework.util.StringUtils;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 
+/**
+ * @author QinHaoTong
+ */
 @Component
 @Slf4j
+@AllArgsConstructor
 public class UserAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
-    @Autowired
     private IpBlacklistService ipBlacklistService;
 
-    @Autowired
     private ApplicationConfigService applicationConfigService;
 
-    @Autowired
-    private SessionRegistry sessionRegistry;
-
+    private LoginRecordService loginRecordService;
     /**
      * 登录成功后返回
      */
@@ -54,17 +54,14 @@ public class UserAuthenticationSuccessHandler implements AuthenticationSuccessHa
         }
 
         // 添加登陆纪录
-
-        // 单点登陆
-        Dictionary singleLogin = applicationConfigService.getSingleConfig("系统管理", "标识", "single_login");
-        if(Boolean.parseBoolean(singleLogin.getDicValue())){
-            List<SessionInformation> allSessions = sessionRegistry.getAllSessions(authentication.getPrincipal(), false);
-            System.out.println(allSessions.size());
-        }
-
-
-        log.info(authentication.getName()+"登录");
+        LoginRecord record = new LoginRecord();
+        record.setAccount(authentication.getName());
+        record.setLoginSuccess(true);
+        record.setIp(ipAddr);
+        record.setLoginTime(new Date());
+        loginRecordService.insert(record);
         returnMessage(response,ResultMap.data().success().message("登陆成功"));
+        log.info("ip：{} 账号：{} 登录",ipAddr,authentication.getName());
     }
 
     private void returnMessage( HttpServletResponse response,ResultMap<Object> resultMap) throws IOException {

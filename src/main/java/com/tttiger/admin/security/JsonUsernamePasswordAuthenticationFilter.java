@@ -1,7 +1,9 @@
 package com.tttiger.admin.security;
 
 import com.alibaba.fastjson.JSON;
+import com.tttiger.admin.bean.sys.security.Aes;
 import com.tttiger.admin.utils.AesUtil;
+import com.tttiger.admin.utils.SecurityUtil;
 import org.apache.commons.io.IOUtils;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -31,10 +33,10 @@ public class JsonUsernamePasswordAuthenticationFilter extends UsernamePasswordAu
             UsernamePasswordAuthenticationToken authRequest = null;
             try (InputStream is = request.getInputStream()) {
                 ServletInputStream inputStream = request.getInputStream();
-                // 解密json信息
-                String aesKey = request.getSession().getAttribute("transportAesKey").toString();
-                String aesIv = request.getSession().getAttribute("transportAesIv").toString();
-                String decrypt = AesUtil.decrypt(IOUtils.toString(inputStream, "UTF-8"), aesKey,aesIv);
+                // 获取当前加密通信aes密钥
+                Aes transportAes = SecurityUtil.getTransportAes();
+                String decrypt = AesUtil.decrypt(IOUtils.toString(inputStream, "UTF-8"),
+                        transportAes.getKey(),transportAes.getIv());
                 Map<Object,Object> map = JSON.parseObject(decrypt, Map.class);
 
                 authRequest = new UsernamePasswordAuthenticationToken(

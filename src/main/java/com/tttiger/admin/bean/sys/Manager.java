@@ -14,6 +14,7 @@ import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -40,6 +41,23 @@ public class Manager extends BaseBean {
     @Length(min = 6,max = 12,message = "请输入6至12位密码",groups = {Add.class, Update.class})
     @NotBlank(message = "密码不能为空",groups = {Add.class, Update.class})
     private String managerPassword;
+
+    /**
+     * 账号状态
+     */
+    private Integer status;
+    @TableField(exist = false)
+    public static final Integer ACCOUNT_ACTIVE = 0;
+    @TableField(exist = false)
+    public static final Integer ACCOUNT_LOCKED = 1;
+    @TableField(exist = false)
+    public static final Integer ACCOUNT_EXPIRED = 2;
+
+
+    /**
+     * 账号过期时间
+     */
+    private Date overTime;
 
     /**
      * 添加管理密码确认

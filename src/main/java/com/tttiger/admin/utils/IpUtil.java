@@ -2,7 +2,7 @@ package com.tttiger.admin.utils;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tttiger.admin.bean.sys.security.LoginRecord;
+import com.tttiger.admin.bean.sys.security.IpInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
 
@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 
 /**
@@ -67,7 +68,7 @@ public class IpUtil {
     /**
      * 调用太平洋网络IP地址查询Web接口（http://whois.pconline.com.cn/），返回ip、地理位置
      */
-    public static LoginRecord getIpVo(String ip){
+    public static IpInfo getIpInfo(String ip){
         //查本机
         String url = "http://whois.pconline.com.cn/ipJson.jsp?json=true";
 
@@ -80,7 +81,7 @@ public class IpUtil {
         String read;
         try {
             HttpURLConnection urlConnection = (HttpURLConnection) new URL(url).openConnection();
-            urlConnection.setRequestProperty("Charset", "GBK");
+            urlConnection.setRequestProperty("Charset", "UTF-8");
             BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), "GBK"));
             while ((read = in.readLine()) != null) {
                 inputLine.append(read);
@@ -106,7 +107,7 @@ public class IpUtil {
         }
          */
 
-        LoginRecord ipVo = null;
+        IpInfo ipVo = null;
         try {
             ObjectMapper mapper = new ObjectMapper();
             //当属性的值为空（null或者""）时，不进行序列化，可以减少数据传输
@@ -114,7 +115,7 @@ public class IpUtil {
             //设置日期格式
             mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
             //转换成IpVo
-            ipVo = mapper.readValue(new String(inputLine.toString().getBytes("GBK"), "GBK"), LoginRecord.class);
+            ipVo = mapper.readValue(new String(inputLine.toString().getBytes(StandardCharsets.UTF_8), StandardCharsets.UTF_8), IpInfo.class);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -124,8 +125,8 @@ public class IpUtil {
     /**
      * 直接根据访问者的Request，返回ip、地理位置
      */
-    public static LoginRecord getIpVoByRequest(HttpServletRequest request){
-        return IpUtil.getIpVo(IpUtil.getIpAddr(request));
+    public static IpInfo getIpInfo(HttpServletRequest request){
+        return IpUtil.getIpInfo(IpUtil.getIpAddr(request));
     }
 
 }

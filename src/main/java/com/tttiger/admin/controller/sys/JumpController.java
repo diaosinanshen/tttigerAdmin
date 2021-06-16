@@ -15,11 +15,6 @@ public class JumpController {
         return "welcome";
     }
 
-    @GetMapping("/denied")
-    public String toDenied(){
-        return "denied";
-    }
-
     @GetMapping("/role")
     public String toRole(){
         return "role";

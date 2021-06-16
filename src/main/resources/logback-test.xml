@@ -102,7 +102,7 @@
         <appender-ref ref="errorAppender" />
     </logger>
 
-    <root level="DEBUG">
+    <root level="INFO">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="infoAppender"/>
         <appender-ref ref="debugAppender"/>

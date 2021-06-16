@@ -32,8 +32,6 @@ public class DecryptRequestBodyAdvice implements RequestBodyAdvice {
     public HttpInputMessage beforeBodyRead(HttpInputMessage inputMessage, MethodParameter methodParameter, Type targetType, Class<? extends HttpMessageConverter<?>> converterType) throws IOException {
         try {
             HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-            String aesKey = request.getSession().getAttribute("transportAesKey").toString();
-            String aesIv = request.getSession().getAttribute("transportAesIv").toString();
             boolean encode = false;
             if (methodParameter.getMethod().isAnnotationPresent(SecurityParameter.class)) {
                 //获取注解配置的包含和去除字段

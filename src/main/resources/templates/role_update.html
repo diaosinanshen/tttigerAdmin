@@ -17,23 +17,28 @@
 </head>
 <body>
 <div style="padding:20px 50px 0 50px">
-    <div class="layui-form-item">
-        <label class="layui-form-label">角色名称</label>
-        <div class="layui-input-block">
-            <input type="text" name="roleName" id="roleName" autocomplete="off" class="layui-input">
+
+    <form class="layui-form" action="">
+        <div class="layui-form-item">
+            <label class="layui-form-label">角色名称</label>
+            <div class="layui-input-block">
+                <input type="text" name="roleName" id="roleName" autocomplete="off" class="layui-input"
+                       lay-verify="roleName">
+            </div>
         </div>
-    </div>
-    <div class="layui-form-item">
-        <label class="layui-form-label">所有权限</label>
-        <div class="layui-input-block">
-            <div id="menuTree"></div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">所有权限</label>
+            <div class="layui-input-block">
+                <div id="menuTree"></div>
+            </div>
         </div>
-    </div>
-    <div style="text-align:center;padding: 40px;">
-        <button class="layui-btn layui-btn-lg layui-btn-primary" onclick="closePage()">取消</button>
-        <button class="layui-btn layui-btn-lg layui-btn-normal" style="margin-left: 120px" onclick="updateRole()">保存
-        </button>
-    </div>
+        <div style="text-align:center;padding: 40px;">
+            <button class="layui-btn layui-btn-lg layui-btn-primary" onclick="closePage()">取消</button>
+            <button class="layui-btn layui-btn-lg layui-btn-normal" style="margin-left: 120px"  lay-submit=""
+                    lay-filter="updateRole">保存
+            </button>
+        </div>
+    </form>
 </div>
 </body>
 
@@ -45,8 +50,17 @@
     var menuTree;
     layui.use(['tree', 'util'], function () {
         menuTree = layui.tree;
-        var layer = layui.layer;
-        var util = layui.util;
+        form = layui.form;
+        form.verify({
+            roleName: function (value) {
+                if (value.trim().length <= 0) {
+                    return '角色名称不能为空';
+                }
+            }
+        });
+        form.on('submit(updateRole)', function (data) {
+            return updateRole();
+        });
         http({
             url: "/role/select-menu"
             , method: "get"
@@ -108,10 +122,18 @@
         }
     }
 
+    /**
+     * 修改角色权限
+     * @returns {boolean}
+     */
     function updateRole() {
         var data = menuTree.getChecked('menuTreeFlag');
         var arr = [];
         getSelectMenuId(data, arr);
+        if(arr.length == 0){
+            showError("角色权限不能为空");
+            return false;
+        }
         var role = {};
         role.roleName = $("#roleName").val();
         role.roleId = parent.updateRoleId;

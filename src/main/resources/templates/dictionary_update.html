@@ -18,13 +18,11 @@
 <body>
 <div style="padding:20px 50px 0 50px">
 
-
-
     <form class="layui-form" action="">
         <div class="layui-form-item">
             <label class="layui-form-label">模块名称</label>
             <div class="layui-input-block">
-                <select id="modules" name="moduleName" lay-verify="required" lay-filter="modules" lay-search="">
+                <select id="modules" name="moduleName" lay-verify="required" lay-filter="modules" lay-search="" disabled>
                     <option value="">请选择模块名称</option>
                 </select>
             </div>
@@ -39,7 +37,7 @@
         <div class="layui-form-item">
             <label class="layui-form-label">组名称</label>
             <div class="layui-input-block">
-                <select id="groups" name="groupName" lay-verify="required" lay-search="">
+                <select id="groups" name="groupName" lay-verify="required" lay-search="" disabled>
                 </select>
             </div>
         </div>
@@ -47,20 +45,20 @@
             <label class="layui-form-label">组键</label>
             <div class="layui-input-block">
                 <input type="text" name="groupKey" id="groupKey" autocomplete="off"
-                       class="layui-input" lay-verify="groupKey" disabled>
+                       class="layui-input"  disabled>
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label">字段键</label>
             <div class="layui-input-block">
                 <input type="text" name="dicKey" id="dicKey" autocomplete="off"
-                       class="layui-input" lay-verify="dicKey">
+                       class="layui-input" disabled>
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label">值类型</label>
             <div class="layui-input-block">
-                <select name="valueType" lay-filter="types">
+                <select name="valueType" id="valueType" lay-filter="types" disabled>
                     <option value="0">字符</option>
                     <option value="1">布尔</option>
                     <option value="2">数值</option>
@@ -72,8 +70,7 @@
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label">字段值</label>
-            <div class="layui-input-block">
-                <input type="text" id="dicValue" name="dicValue" autocomplete="off" class="layui-input" lay-verify="dicValue">
+            <div class="layui-input-block"  id="dicValue">
             </div>
         </div>
         <div class="layui-form-item">
@@ -93,6 +90,12 @@
 </div>
 </body>
 
+<style>
+    .layui-input[disabled] {
+        color: #d2d2d2 !important;
+        cursor: not-allowed !important;
+    }
+</style>
 <script src="/js/base.js" charset="utf-8"></script>
 <script src="/lib/jquery-3.4.1/jquery-3.4.1.min.js" charset="utf-8"></script>
 <script src="/lib/layui-v2.5.4/layui.js" charset="utf-8"></script>
@@ -105,20 +108,10 @@
         form = layui.form;
         laydate = layui.laydate;
         $ = layui.jquery;
-        //自定义验证规则
-        form.verify({
-            dicKey: [
-                /^[\S]{2,12}$/
-                , '字典key必须2到12位，且不能出现空格'
-            ]
-            , dicValue: [
-                /^[\S]{2,12}$/
-                , '字典value必须6到12位，且不能出现空格'
-            ]
-        });
+
         form.on('submit(updateDic)', function (data) {
             if(data.field.valueType == '1'){
-                data.field.dicValue = data.field.dicValue == 'ON' ? '1':'0';
+                data.field.dicValue = data.field.dicValue == 'on' ? 'true':'false';
             }
             data.field.dicId = parent.curDic.dicId;
             http({
@@ -137,53 +130,14 @@
             }, true, true);
             return false;
         });
-        form.on('select(modules)', function (data) {
-            console.log(data);
-            buildGroups(data.value);
-        });
-        form.on('select(types)', function (data) {
-            console.log(data.value);
-            if (data.value === "0") {
-                $("#dicValue").empty()
-                    .append("<input type='text' name='dicValue' autocomplete='off' class='layui-input'>");
-                form.render();
-            } else if (data.value === "1") {
-                console.log("switch");
-                $("#dicValue").empty()
-                    .append("<input type='checkbox' name='dicValue' lay-skin='switch' lay-text='ON|OFF' checked>");
-                form.render();
-            } else if (data.value === "2") {
-                $("#dicValue").empty()
-                    .append("<input type='text' name='dicValue' autocomplete='off' class='layui-input'>");
-                form.render();
-            } else if (data.value === "3") {
-                $("#dicValue").empty()
-                    .append("<input type='text' id='dateInput' name='dicValue' autocomplete='off' class='layui-input'>");
-                laydate.render({
-                    elem: '#dateInput',
-                    type: 'date'
-                });
-            } else if (data.value === "4") {
-                $("#dicValue").empty()
-                    .append("<input type='text' id='dateInput' name='dicValue' autocomplete='off' class='layui-input'>");
-                laydate.render({
-                    elem: '#dateInput',
-                    type: 'time'
-                });
-            } else if (data.value === "5") {
-                $("#dicValue").empty()
-                    .append("<input type='text' id='dateInput' name='dicValue' autocomplete='off' class='layui-input'>");
-                laydate.render({
-                    elem: '#dateInput',
-                    type: 'datetime'
-                });
-            }
-        });
+
         buildModules();
         initGroup();
+        initType();
         $('#dicKey').val(parent.curDic.dicKey);
-        $('#dicValue').val(parent.curDic.dicValue);
+        $('#valueType').val(parent.curDic.valueType);
         $('#description').val(parent.curDic.description);
+        form.render();
     });
 
 
@@ -197,16 +151,13 @@
             dataType: "json"
         }, function (res) {
             res.data.forEach((item) => {
-                console.log(parent.curDic);
                 if (item.moduleKey == parent.curDic.moduleKey) {
-                    debugger
                     $("#modules").append("<option value='" + item.moduleName + "' selected>" + item.moduleName + "</option>");
                     $("#moduleKey").val(item.moduleKey);
                 } else {
                     $("#modules").append("<option value='" + item.moduleName + "'>" + item.moduleName + "</option>");
                 }
             });
-            form.render();
         }, function (res) {
             showError(res.message)
         });
@@ -231,39 +182,61 @@
                     $("#groups").append("<option value='" + item.groupName + "'>" + item.groupName + "</option>");
                 }
             });
-            form.render();
         }, function (res) {
             showError(res.message)
         });
     }
 
     /**
-     * 动态加载模块中的组
-     * @param moduleName
+     * 初始化字典类型
      */
-    function buildGroups(moduleKey) {
-        http({
-            url: "/dic/all-group",
-            method: "get",
-            data: {
-                "moduleKey": moduleKey
-            },
-            dataType: "json"
-        }, function (res) {
-            res.data.forEach((item) => {
-                $("#groups").append("<option value='" + item.groupName + "'>" + item.groupName + "</option>");
+    function initType(){
+        var type =  parent.curDic.valueType;
+        var value = parent.curDic.dicValue;
+
+        if (type == "0") {
+            $("#dicValue")
+                .append("<input type='text' name='dicValue' autocomplete='off' class='layui-input' value = '"+value+"'>");
+        } else if (type == "1") {
+            if(value == "true"){
+                $("#dicValue")
+                    .append("<input id='switchInput' type='checkbox' name='dicValue' lay-skin='switch' lay-text='开启|关闭'  checked>");
+            }else{
+                $("#dicValue")
+                    .append("<input id='switchInput' type='checkbox' name='dicValue' lay-skin='switch' lay-text='开启|关闭' >");
+            }
+            form.render({
+                elem: '#switchInput',
+                type: 'switch'
             });
-            if (res.data == null || res.data == 0) {
-                $("#groups").empty();
-            }
-            form.render();
-        }, function (res) {
-            showError(res.message);
-            if (res.data == null || res.data == 0) {
-                $("#groups").empty();
-            }
-            form.render();
-        });
+        } else if (type == "2") {
+            $("#dicValue")
+                .append("<input type='text' name='dicValue' autocomplete='off' class='layui-input' lay-filter='number' value = '"+value+"'>");
+        } else if (type == "3") {
+            $("#dicValue")
+                .append("<input type='text' id='dateInput' name='dicValue' autocomplete='off' class='layui-input'>");
+            laydate.render({
+                elem: '#dateInput',
+                type: 'date',
+                value: value
+            });
+        } else if (type == "4") {
+            $("#dicValue")
+                .append("<input type='text' id='dateInput' name='dicValue' autocomplete='off' class='layui-input'>");
+            laydate.render({
+                elem: '#dateInput',
+                type: 'time',
+                value: value
+            });
+        } else if (type == "5") {
+            $("#dicValue")
+                .append("<input type='text' id='dateInput' name='dicValue' autocomplete='off' class='layui-input'>");
+            laydate.render({
+                elem: '#dateInput',
+                type: 'datetime',
+                value: value
+            });
+        }
     }
 </script>
 </html>

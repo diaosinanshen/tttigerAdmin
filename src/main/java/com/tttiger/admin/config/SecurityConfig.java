@@ -1,9 +1,6 @@
 package com.tttiger.admin.config;
 
-import com.tttiger.admin.security.DatabaseUserDetailServiceImpl;
-import com.tttiger.admin.security.JsonUsernamePasswordAuthenticationFilter;
-import com.tttiger.admin.security.RoleBasedVoter;
-import com.tttiger.admin.security.VerifyCodeFilter;
+import com.tttiger.admin.security.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.access.AccessDecisionManager;
@@ -138,9 +135,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // 添加 Session管理器
         http.sessionManagement()
                 // Session失效后跳转到这个链接
-                .invalidSessionUrl("/user/login")
-                //最大session并发数量，超过定义数量前一个session就会失效
+//                .invalidSessionUrl("/login")
+                // 最大session并发数量，超过定义数量前一个session就会失效
                 .maximumSessions(1)
+                // 设置用户被挤下线处理提示
+                .expiredSessionStrategy(new RedirectSessionInformationExpiredStrategy())
                 //Session达到最大有效数的时候，不再允许相同的账户登录。
                 .maxSessionsPreventsLogin(true)
                 .sessionRegistry(sessionRegistry);

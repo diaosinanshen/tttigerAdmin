@@ -119,8 +119,9 @@
             ]
         });
         form.on('submit(addDic)', function (data) {
+            debugger
             if(data.field.valueType == '1'){
-                data.field.dicValue = data.field.dicValue == 'ON' ? '1':'0';
+                data.field.dicValue = data.field.dicValue == 'on' ? 'true':'false';
             }
             http({
                 url: "/dic/add",
@@ -151,9 +152,8 @@
                     .append("<input type='text' name='dicValue' lay-verify='dicValue' autocomplete='off' class='layui-input'>");
                 form.render();
             } else if (data.value === "1") {
-                console.log("switch");
                 $("#dicValue").empty()
-                    .append("<input type='checkbox' name='dicValue' lay-skin='switch' lay-text='ON|OFF' checked>");
+                    .append("<input type='checkbox' name='dicValue' lay-skin='switch' lay-text='开启|关闭' checked>");
                 form.render();
             } else if (data.value === "2") {
                 $("#dicValue").empty()
@@ -219,14 +219,12 @@
             dataType: "json"
         }, function (res) {
             groupMap = new Map();
+            $("#groups").empty();
             res.data.forEach((item) => {
                 groupMap.set(item.groupName,item.groupKey);
                 $("#groups").append("<option value='" + item.groupName + "'>" + item.groupName + "</option>");
             });
-            if (res.data == null || res.data == 0) {
-                $("#groups").empty();
-            }
-            $("#groupKey").val($("#groups").val());
+            $("#groupKey").val(groupMap.get($("#groups").val()));
             form.render();
         }, function (res) {
             showError(res.message);

@@ -102,9 +102,37 @@
                 {title: '序号', type: "numbers", align: 'center'}
                 , {field: 'moduleName', title: '模块名称', align: 'center'}
                 , {field: 'groupName', title: '组名称', align: 'center'}
-                , {field: 'dicKey', title: '字段键', align: 'center'}
-                , {field: 'dicValue', title: '字段值', align: 'center'}
-                , {field: 'description', title: '字段描述', align: 'center'}
+                , {field: 'valueType', title: '字典类型', align: 'center',templet:function(data){
+                        var type = "";
+                        switch (data.valueType) {
+                            case 0:
+                                type = "字符串";
+                                break;
+                            case 1:
+                                type = "布尔值";
+                                break;
+                            case 2:
+                                type = "数字";
+                                break;
+                            case 3:
+                                type = "日期";
+                                break;
+                            case 4:
+                                type = "时间";
+                                break;
+                            case 5:
+                                type = "日期时间";
+                        }
+                        return type;
+                    }}
+                , {field: 'dicKey', title: '字典键', align: 'center'}
+                , {field: 'dicValue', title: '字典值', align: 'center',templet:function(data){
+                        if(data.valueType == '1'){
+                            return data.dicValue == 'true' ? '开启':'关闭';
+                        }
+                        return data.dicValue;
+                    }}
+                , {field: 'description', title: '字典描述', align: 'center'}
                 , {fixed: 'right', align: 'center', toolbar: '#barDemo', title: '操作'}
             ] ]
         });

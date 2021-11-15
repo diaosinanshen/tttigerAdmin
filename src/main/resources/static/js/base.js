@@ -40,9 +40,9 @@ function showSuccess(message, after) {
     layui.use(["layer"], function () {
         var layer = layui.layer;
         if (message != null && message !== '') {
-            layer.msg(message, {time: 2000, icon: 6});
+            layer.msg(message, {time: 1400, icon: 6});
             if (after != null) {
-                setTimeout(after, 2000);
+                setTimeout(after, 1400);
             }
         } else {
             throw new Error("messages不能为null");

@@ -130,7 +130,7 @@
         var data = menuTree.getChecked('menuTreeFlag');
         var arr = [];
         getSelectMenuId(data, arr);
-        if(arr.length == 0){
+        if(arr.length === 0){
             showError("角色权限不能为空");
             return false;
         }
@@ -149,7 +149,7 @@
             parent.getData();
             closePage();
         }, function (res) {
-            showError(res.message)
+            showError(res.message);
         })
     }
 
